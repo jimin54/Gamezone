@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+<title>貪食蛇 - 免費線上小遊戲</title>
+<meta name="description" content="經典貪食蛇線上免費玩,手機電腦都能玩,挑戰你的最高分!">
+<meta property="og:title" content="貪食蛇 - 免費線上小遊戲">
+<meta property="og:description" content="經典貪食蛇線上免費玩,挑戰你的最高分!">
+
+<!-- ====== 變現步驟 1:申請 Google AdSense 後,取消註解並換成你的 ID ======
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXXXXXXXXXXXXXX" crossorigin="anonymous"></script>
+-->
+
+<style>
+  :root { --bg:#14181f; --card:#1e2430; --accent:#4ade80; --text:#e8eef7; }
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  body { margin:0; background:var(--bg); color:var(--text); font-family:system-ui,-apple-system,"Noto Sans TC",sans-serif;
+         display:flex; flex-direction:column; align-items:center; min-height:100vh; padding:12px; }
+  h1 { margin:4px 0 8px; font-size:1.4rem; }
+  .ad { width:100%; max-width:420px; min-height:60px; margin:8px 0; background:#ffffff0d; border:1px dashed #ffffff30;
+        border-radius:8px; display:flex; align-items:center; justify-content:center; font-size:.75rem; color:#8895a7; overflow:hidden; }
+  .bar { width:100%; max-width:420px; display:flex; justify-content:space-between; font-weight:600; margin-bottom:6px; }
+  .wrap { position:relative; width:100%; max-width:420px; }
+  canvas { width:100%; aspect-ratio:1; background:var(--card); border-radius:12px; display:block; touch-action:none; }
+  .overlay { position:absolute; inset:0; background:#000b; border-radius:12px; display:flex; flex-direction:column;
+             align-items:center; justify-content:center; gap:10px; text-align:center; padding:16px; }
+  .overlay.hidden { display:none; }
+  button { background:var(--accent); color:#06210f; border:0; border-radius:10px; padding:10px 22px; font-size:1rem; font-weight:700; cursor:pointer; }
+  button.ghost { background:transparent; color:var(--text); border:1px solid #ffffff50; }
+  .pad { display:grid; grid-template-columns:repeat(3,64px); grid-template-rows:repeat(2,56px); gap:6px; margin-top:12px; }
+  .pad button { padding:0; font-size:1.3rem; background:var(--card); color:var(--text); border:1px solid #ffffff20; }
+  .pad .up { grid-column:2; } .pad .left { grid-column:1; grid-row:2; } .pad .down { grid-column:2; grid-row:2; } .pad .right { grid-column:3; grid-row:2; }
+  @media (hover:hover) and (pointer:fine) { .pad { display:none; } }
+  footer { margin-top:auto; padding:12px; font-size:.75rem; color:#8895a7; }
+</style>
+</head>
+<body>
+  <h1>🐍 貪食蛇</h1>
+
+  <!-- ====== 變現步驟 2:頂部橫幅廣告位 ======
+       把 div 內容換成 AdSense 給你的 <ins class="adsbygoogle" ...> 程式碼 -->
+  <div class="ad" id="ad-top">廣告位(頂部橫幅 320x50)</div>
+
+  <div class="bar"><span>分數:<b id="score">0</b></span><span>最高分:<b id="best">0</b></span></div>
+
+  <div class="wrap">
+    <canvas id="c" width="400" height="400"></canvas>
+    <div class="overlay" id="overlay">
+      <h2 id="ovTitle" style="margin:0">準備好了嗎?</h2>
+      <div id="ovMsg">方向鍵 / WASD / 滑動螢幕控制</div>
+      <button id="startBtn">開始遊戲</button>
+      <button class="ghost hidden" id="shareBtn">分享我的分數</button>
+    </div>
+  </div>
+
+  <div class="pad">
+    <button class="up" data-d="up">▲</button>
+    <button class="left" data-d="left">◀</button>
+    <button class="down" data-d="down">▼</button>
+    <button class="right" data-d="right">▶</button>
+  </div>
+
+  <!-- ====== 變現步驟 3:遊戲下方廣告位(曝光最高的位置之一) ====== -->
+  <div class="ad" id="ad-bottom">廣告位(遊戲下方 300x250)</div>
+
+  <footer>© 2026 貪食蛇小遊戲</footer>
+
+<script>
+(() => {
+  const N = 20, S = 400 / N;
+  const cv = document.getElementById('c'), ctx = cv.getContext('2d');
+  const $ = id => document.getElementById(id);
+  const overlay = $('overlay'), startBtn = $('startBtn'), shareBtn = $('shareBtn');
+
+  let snake, dir, nextDir, food, score, timer, running = false, plays = 0;
+  let best = 0;
+  try { best = +localStorage.getItem('snakeBest') || 0; } catch(e) {}
+  $('best').textContent = best;
+
+  const DIRS = { up:[0,-1], down:[0,1], left:[-1,0], right:[1,0] };
+
+  function reset() {
+    snake = [[10,10],[9,10],[8,10]];
+    dir = nextDir = DIRS.right;
+    score = 0; $('score').textContent = 0;
+    placeFood();
+  }
+  function placeFood() {
+    do { food = [Math.floor(Math.random()*N), Math.floor(Math.random()*N)]; }
+    while (snake.some(s => s[0]===food[0] && s[1]===food[1]));
+  }
+  function start() {
+    reset(); running = true; plays++;
+    overlay.classList.add('hidden');
+    clearInterval(timer);
+    timer = setInterval(tick, 120);
+    draw();
+  }
+  function speedUp() {
+    clearInterval(timer);
+    timer = setInterval(tick, Math.max(55, 120 - score * 2));
+  }
+  function tick() {
+    dir = nextDir;
+    const head = [snake[0][0] + dir[0], snake[0][1] + dir[1]];
+    if (head[0]<0 || head[1]<0 || head[0]>=N || head[1]>=N || snake.some(s => s[0]===head[0] && s[1]===head[1])) return gameOver();
+    snake.unshift(head);
+    if (head[0]===food[0] && head[1]===food[1]) {
+      score++; $('score').textContent = score;
+      placeFood(); speedUp();
+    } else snake.pop();
+    draw();
+  }
+  function draw() {
+    ctx.clearRect(0,0,400,400);
+    ctx.fillStyle = '#f87171';
+    ctx.beginPath(); ctx.arc(food[0]*S+S/2, food[1]*S+S/2, S/2-2, 0, 7); ctx.fill();
+    snake.forEach((s,i) => {
+      ctx.fillStyle = i===0 ? '#86efac' : '#4ade80';
+      ctx.fillRect(s[0]*S+1, s[1]*S+1, S-2, S-2);
+    });
+  }
+  function gameOver() {
+    running = false; clearInterval(timer);
+    if (score > best) { best = score; $('best').textContent = best; try { localStorage.setItem('snakeBest', best); } catch(e) {} }
+    $('ovTitle').textContent = '遊戲結束';
+    $('ovMsg').textContent = `本局 ${score} 分|最高 ${best} 分`;
+    startBtn.textContent = '再玩一次';
+    shareBtn.classList.remove('hidden');
+    overlay.classList.remove('hidden');
+    // ====== 變現步驟 4:遊戲結束是插入廣告的最佳時機 ======
+    // 例如每玩 3 局顯示一次插頁廣告:
+    // if (plays % 3 === 0) showInterstitialAd();
+  }
+  function turn(name) {
+    const d = DIRS[name];
+    if (d[0] + dir[0] !== 0 || d[1] + dir[1] !== 0) nextDir = d; // 禁止直接迴轉
+  }
+
+  startBtn.onclick = start;
+  shareBtn.onclick = async () => {
+    const text = `我在貪食蛇拿到 ${score} 分,來挑戰我!`;
+    try {
+      if (navigator.share) await navigator.share({ title: '貪食蛇', text, url: location.href });
+      else { await navigator.clipboard.writeText(text + ' ' + location.href); shareBtn.textContent = '已複製連結!'; }
+    } catch(e) {}
+  };
+
+  document.addEventListener('keydown', e => {
+    const m = { ArrowUp:'up', w:'up', W:'up', ArrowDown:'down', s:'down', S:'down',
+                ArrowLeft:'left', a:'left', A:'left', ArrowRight:'right', d:'right', D:'right' }[e.key];
+    if (m) { e.preventDefault(); turn(m); }
+    else if ((e.key===' '||e.key==='Enter') && !running) start();
+  });
+  document.querySelectorAll('.pad button').forEach(b => b.addEventListener('pointerdown', e => { e.preventDefault(); turn(b.dataset.d); }));
+
+  let tx, ty;
+  cv.addEventListener('touchstart', e => { tx = e.touches[0].clientX; ty = e.touches[0].clientY; }, { passive:true });
+  cv.addEventListener('touchmove', e => {
+    if (tx == null) return;
+    const dx = e.touches[0].clientX - tx, dy = e.touches[0].clientY - ty;
+    if (Math.abs(dx) > 25 || Math.abs(dy) > 25) {
+      turn(Math.abs(dx) > Math.abs(dy) ? (dx>0?'right':'left') : (dy>0?'down':'up'));
+      tx = e.touches[0].clientX; ty = e.touches[0].clientY;
+    }
+  }, { passive:true });
+
+  reset(); draw();
+})();
+</script>
+</body>
+</html>
