@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+<title>可愛翻翻樂 - 免費線上記憶配對遊戲</title>
+<meta name="description" content="超可愛的動物記憶翻牌遊戲,線上免費玩,三種難度,手機電腦都能玩,挑戰最少步數!">
+<meta property="og:title" content="可愛翻翻樂 - 免費線上記憶配對遊戲">
+<meta property="og:description" content="超可愛的動物記憶翻牌遊戲,挑戰最少步數!">
+
+<!-- ====== 變現:通過 AdSense 審核後,取消註解並換成你的 ID ======
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXXXXXXXXXXXXXX" crossorigin="anonymous"></script>
+-->
+
+<style>
+  :root { --bg:#fff1f5; --card:#ffe4ec; --accent:#ff7eb6; --text:#6b3a4e; }
+  * { box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+  body { margin:0; background:var(--bg); color:var(--text); font-family:"Noto Sans TC",system-ui,-apple-system,sans-serif;
+         display:flex; flex-direction:column; align-items:center; min-height:100vh; padding:12px; }
+  h1 { margin:4px 0 4px; font-size:1.6rem; letter-spacing:2px; }
+  nav { font-size:.85rem; margin-bottom:6px; }
+  nav a { color:#c06a8f; margin:0 8px; text-decoration:none; font-weight:600; }
+  nav a:hover { color:var(--accent); }
+  .ad { width:100%; max-width:420px; min-height:60px; margin:8px 0; background:#ff7eb614; border:1px dashed #ff7eb655;
+        border-radius:12px; display:flex; align-items:center; justify-content:center; font-size:.75rem; color:#b08795; overflow:hidden; }
+  .levels { display:flex; gap:8px; margin:6px 0 10px; }
+  .lv { background:#fff; color:var(--accent); border:2px solid #ffc2d9; box-shadow:none; padding:6px 16px; font-size:.9rem; }
+  .lv.on { background:var(--accent); color:#fff; border-color:var(--accent); }
+  .bar { width:100%; max-width:420px; display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; gap:6px; font-weight:700; }
+  .box { background:var(--card); border-radius:16px; padding:4px 12px; text-align:center; min-width:70px; }
+  .box small { display:block; font-size:.65rem; color:#b08795; font-weight:500; }
+  .wrap { position:relative; width:100%; max-width:420px; }
+  #board { display:grid; gap:10px; background:var(--card); padding:10px; border-radius:20px; user-select:none;
+           border:4px solid #ffc2d9; box-shadow:0 6px 18px #ff7eb633; }
+  .card { perspective:600px; aspect-ratio:1; cursor:pointer; }
+  .inner { position:relative; display:block; width:100%; height:100%; transition:transform .35s; transform-style:preserve-3d; }
+  .card.flipped .inner, .card.matched .inner { transform:rotateY(180deg); }
+  .face { position:absolute; inset:0; display:flex; align-items:center; justify-content:center; border-radius:16px;
+          backface-visibility:hidden; -webkit-backface-visibility:hidden; }
+  .front { background:linear-gradient(135deg,#ffb3d1,#ff8fc0); font-size:1.7rem; box-shadow:0 3px 0 #e0599a; }
+  .back { background:#fff; transform:rotateY(180deg); font-size:clamp(1.8rem,10vw,2.8rem); border:3px solid #ffc2d9; }
+  .card.matched .back { background:#e8ffef; border-color:#8be3a8; animation:hop .45s; }
+  @keyframes hop { 0%{transform:rotateY(180deg) scale(1)} 50%{transform:rotateY(180deg) scale(1.18)} 100%{transform:rotateY(180deg) scale(1)} }
+  .overlay { position:absolute; inset:0; background:#fff1f5ee; border-radius:20px; display:flex; flex-direction:column;
+             align-items:center; justify-content:center; gap:10px; text-align:center; padding:16px; }
+  .overlay.hidden { display:none; }
+  .big { font-size:3rem; line-height:1; }
+  button { background:var(--accent); color:#fff; border:0; border-radius:999px; padding:10px 22px; font-size:1rem; font-weight:700; cursor:pointer;
+           box-shadow:0 4px 0 #e0599a; }
+  button:active { transform:translateY(2px); box-shadow:0 2px 0 #e0599a; }
+  button.ghost { background:#fff; color:var(--accent); border:2px solid var(--accent); box-shadow:none; }
+  button.hidden { display:none; }
+  .tools { width:100%; max-width:420px; text-align:center; margin-top:10px; font-size:.8rem; color:#b08795; }
+  footer { margin-top:auto; padding:12px; font-size:.75rem; color:#b08795; }
+</style>
+</head>
+<body>
+  <h1>🐰 可愛翻翻樂 🌸</h1>
+  <nav><a href="index.html">🐍 貪食蛇</a><a href="2048.html">🐣 2048</a><a href="memory.html">🐰 翻翻樂</a></nav>
+
+  <!-- ====== 廣告位 1:頂部橫幅 ====== -->
+  <div class="ad" id="ad-top">廣告位(頂部橫幅 320x50)</div>
+
+  <div class="levels">
+    <button class="lv" data-lv="easy">簡單</button>
+    <button class="lv on" data-lv="normal">普通</button>
+    <button class="lv" data-lv="hard">困難</button>
+  </div>
+
+  <div class="bar">
+    <div class="box"><small>步數</small><span id="moves">0</span></div>
+    <div class="box"><small>時間</small><span id="time">0:00</span></div>
+    <button class="ghost" id="muteBtn" style="padding:4px 12px;box-shadow:none" aria-label="音效開關">🔊</button>
+    <button id="newBtn" style="padding:8px 14px">重來</button>
+    <div class="box"><small>最佳步數</small><span id="best">-</span></div>
+  </div>
+
+  <div class="wrap">
+    <div id="board"></div>
+    <div class="overlay hidden" id="overlay">
+      <div class="big" id="ovEmoji">🏆</div>
+      <h2 id="ovTitle" style="margin:0"></h2>
+      <div id="ovMsg"></div>
+      <button id="ovBtn">再玩一次</button>
+      <button class="ghost" id="shareBtn">邀請朋友來挑戰</button>
+    </div>
+  </div>
+
+  <div class="tools">翻開兩張一樣的動物就算配對成功,用最少步數全部配完!</div>
+
+  <!-- ====== 廣告位 2:遊戲下方 ====== -->
+  <div class="ad" id="ad-bottom">廣告位(遊戲下方 300x250)</div>
+
+  <footer>© 2026 小遊戲專區</footer>
+
+<script>
+(() => {
+  const $ = id => document.getElementById(id);
+  const boardEl = $('board'), overlay = $('overlay');
+  const ANIMALS = ['🐶','🐱','🐰','🦊','🐼','🐨','🦁','🐸','🐵','🐧','🦄','🐯'];
+  const LEVELS = { easy:{cols:3, pairs:6, name:'簡單'}, normal:{cols:4, pairs:8, name:'普通'}, hard:{cols:4, pairs:10, name:'困難'} };
+
+  let level = 'normal', cards = [], first = null, lock = false, moves = 0, matched = 0, secs = 0, tmr = null, started = false, shareText = '', games = 0;
+
+  // ====== 音效(Web Audio,不需要音檔) ======
+  let audio = null, muted = false;
+  try { muted = localStorage.getItem('muteMemory') === '1'; } catch(e) {}
+  const muteBtn = $('muteBtn');
+  muteBtn.textContent = muted ? '🔇' : '🔊';
+  muteBtn.onclick = () => {
+    muted = !muted;
+    muteBtn.textContent = muted ? '🔇' : '🔊';
+    try { localStorage.setItem('muteMemory', muted ? '1' : '0'); } catch(e) {}
+  };
+  function tone(freq, start, dur, type = 'sine', vol = 0.15) {
+    const o = audio.createOscillator(), gn = audio.createGain();
+    o.type = type; o.frequency.value = freq;
+    const t0 = audio.currentTime + start;
+    gn.gain.setValueAtTime(vol, t0);
+    gn.gain.exponentialRampToValueAtTime(0.001, t0 + dur);
+    o.connect(gn); gn.connect(audio.destination);
+    o.start(t0); o.stop(t0 + dur);
+  }
+  function sfx(name) {
+    if (muted) return;
+    try {
+      audio = audio || new (window.AudioContext || window.webkitAudioContext)();
+      if (audio.state === 'suspended') audio.resume();
+      if (name === 'flip') tone(520, 0, .06, 'triangle', .08);
+      else if (name === 'match') { tone(660, 0, .1, 'triangle'); tone(990, .08, .16, 'triangle'); }
+      else if (name === 'miss') { tone(300, 0, .12, 'sine', .1); tone(240, .09, .14, 'sine', .1); }
+      else if (name === 'start') [523, 659, 784].forEach((f, i) => tone(f, i * .08, .12, 'triangle'));
+      else if (name === 'win') [523, 659, 784, 1047, 1319].forEach((f, i) => tone(f, i * .1, .22, 'triangle', .18));
+    } catch(e) {}
+  }
+
+  const fmt = s => Math.floor(s / 60) + ':' + String(s % 60).padStart(2, '0');
+  const bestKey = () => 'memBest_' + level;
+  function loadBest() {
+    let b = null;
+    try { b = +localStorage.getItem(bestKey()) || null; } catch(e) {}
+    $('best').textContent = b || '-';
+    return b;
+  }
+
+  function shuffle(a) {
+    for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; }
+    return a;
+  }
+
+  function build() {
+    clearInterval(tmr);
+    const L = LEVELS[level];
+    first = null; lock = false; moves = 0; matched = 0; secs = 0; started = false; games++;
+    $('moves').textContent = 0; $('time').textContent = '0:00';
+    overlay.classList.add('hidden');
+    loadBest();
+    const pool = shuffle(ANIMALS.slice()).slice(0, L.pairs);
+    const deck = shuffle(pool.concat(pool));
+    boardEl.style.gridTemplateColumns = `repeat(${L.cols}, 1fr)`;
+    boardEl.innerHTML = '';
+    cards = deck.map((emoji, i) => {
+      const el = document.createElement('div');
+      el.className = 'card';
+      el.innerHTML = `<span class="inner"><span class="face front">🌸</span><span class="face back">${emoji}</span></span>`;
+      el.addEventListener('click', () => flip(i));
+      boardEl.appendChild(el);
+      return { el, emoji, flipped:false, matched:false };
+    });
+    if (games > 1) sfx('start');
+  }
+
+  function startTimer() {
+    if (started) return;
+    started = true;
+    tmr = setInterval(() => { secs++; $('time').textContent = fmt(secs); }, 1000);
+  }
+
+  function flip(i) {
+    if (lock) return;
+    const c = cards[i];
+    if (c.flipped || c.matched) return;
+    startTimer();
+    c.flipped = true; c.el.classList.add('flipped'); sfx('flip');
+    if (first === null) { first = i; return; }
+    moves++; $('moves').textContent = moves;
+    const a = cards[first], b = c;
+    first = null;
+    if (a.emoji === b.emoji) {
+      a.matched = b.matched = true;
+      a.el.classList.add('matched'); b.el.classList.add('matched');
+      matched++;
+      setTimeout(() => sfx('match'), 200);
+      if (matched === LEVELS[level].pairs) setTimeout(win, 600);
+    } else {
+      lock = true;
+      setTimeout(() => {
+        a.flipped = b.flipped = false;
+        a.el.classList.remove('flipped'); b.el.classList.remove('flipped');
+        lock = false; sfx('miss');
+      }, 800);
+    }
+  }
+
+  function win() {
+    clearInterval(tmr);
+    sfx('win');
+    const L = LEVELS[level];
+    const prev = loadBest();
+    const isBest = !prev || moves < prev;
+    if (isBest) { try { localStorage.setItem(bestKey(), moves); } catch(e) {} $('best').textContent = moves; }
+    const [em, msg] = moves <= L.pairs + 2 ? ['🏆','超強記憶力!'] : moves <= L.pairs * 1.6 ? ['✨','好厲害!記性真好!']
+                    : moves <= L.pairs * 2.5 ? ['🐰','不錯喔,小動物們都找到朋友了!'] : ['🌱','再玩一次,一定會更快!'];
+    $('ovEmoji').textContent = em;
+    $('ovTitle').textContent = '全部配對成功!';
+    $('ovMsg').innerHTML = `${msg}<br>${L.name}|${moves} 步|${fmt(secs)}${isBest ? '<br>🎉 新紀錄!' : ''}`;
+    shareText = `我在可愛翻翻樂(${L.name})用 ${moves} 步、${fmt(secs)} 配對完成!敢來挑戰嗎?`;
+    $('shareBtn').textContent = '邀請朋友來挑戰';
+    overlay.classList.remove('hidden');
+    // ====== 廣告位 3:遊戲結束是插入廣告的好時機 ======
+    // 例如每玩 3 局顯示一次插頁廣告:if (games % 3 === 0) showInterstitialAd();
+  }
+
+  $('ovBtn').onclick = build;
+  $('newBtn').onclick = build;
+  document.querySelectorAll('.lv').forEach(b => b.onclick = () => {
+    level = b.dataset.lv;
+    document.querySelectorAll('.lv').forEach(x => x.classList.toggle('on', x === b));
+    build();
+  });
+  $('shareBtn').onclick = async () => {
+    const text = shareText || '來玩可愛翻翻樂,挑戰最少步數!';
+    try {
+      if (navigator.share) await navigator.share({ title:'可愛翻翻樂', text, url:location.href });
+      else { await navigator.clipboard.writeText(text + ' ' + location.href); $('shareBtn').textContent = '已複製連結!'; }
+    } catch(e) {}
+  };
+
+  build();
+})();
+</script>
+</body>
+</html>
