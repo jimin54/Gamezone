@@ -18,6 +18,9 @@
   body { margin:0; background:var(--bg); color:var(--text); font-family:"Noto Sans TC",system-ui,-apple-system,sans-serif;
          display:flex; flex-direction:column; align-items:center; min-height:100vh; padding:12px; }
   h1 { margin:4px 0 8px; font-size:1.6rem; letter-spacing:2px; }
+  nav { font-size:.85rem; margin-bottom:6px; }
+  nav a { color:#c06a8f; margin:0 8px; text-decoration:none; font-weight:600; }
+  nav a:hover { color:var(--accent); }
   .ad { width:100%; max-width:420px; min-height:60px; margin:8px 0; background:#ff7eb614; border:1px dashed #ff7eb655;
         border-radius:12px; display:flex; align-items:center; justify-content:center; font-size:.75rem; color:#b08795; overflow:hidden; }
   .bar { width:100%; max-width:420px; display:flex; justify-content:space-between; margin-bottom:8px; font-weight:700; }
@@ -43,6 +46,7 @@
 </head>
 <body>
   <h1>🐍 可愛貪食蛇 🍓</h1>
+  <nav><a href="index.html">🐍 貪食蛇</a><a href="2048.html">🐣 2048</a></nav>
 
   <!-- ====== 廣告位 1:頂部橫幅 ====== -->
   <div class="ad" id="ad-top">廣告位(頂部橫幅 320x50)</div>
