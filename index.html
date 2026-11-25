@@ -3,52 +3,58 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
-<title>貪食蛇 - 免費線上小遊戲</title>
-<meta name="description" content="經典貪食蛇線上免費玩,手機電腦都能玩,挑戰你的最高分!">
-<meta property="og:title" content="貪食蛇 - 免費線上小遊戲">
-<meta property="og:description" content="經典貪食蛇線上免費玩,挑戰你的最高分!">
+<title>可愛貪食蛇 - 免費線上小遊戲</title>
+<meta name="description" content="超可愛的貪食蛇線上免費玩,手機電腦都能玩,吃水果、拿高分!">
+<meta property="og:title" content="可愛貪食蛇 - 免費線上小遊戲">
+<meta property="og:description" content="超可愛的貪食蛇線上免費玩,吃水果、拿高分!">
 
-<!-- ====== 變現步驟 1:申請 Google AdSense 後,取消註解並換成你的 ID ======
+<!-- ====== 變現:通過 AdSense 審核後,取消註解並換成你的 ID ======
 <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXXXXXXXXXXXXXX" crossorigin="anonymous"></script>
 -->
 
 <style>
-  :root { --bg:#14181f; --card:#1e2430; --accent:#4ade80; --text:#e8eef7; }
-  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-  body { margin:0; background:var(--bg); color:var(--text); font-family:system-ui,-apple-system,"Noto Sans TC",sans-serif;
+  :root { --bg:#fff1f5; --card:#ffe4ec; --accent:#ff7eb6; --text:#6b3a4e; }
+  * { box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+  body { margin:0; background:var(--bg); color:var(--text); font-family:"Noto Sans TC",system-ui,-apple-system,sans-serif;
          display:flex; flex-direction:column; align-items:center; min-height:100vh; padding:12px; }
-  h1 { margin:4px 0 8px; font-size:1.4rem; }
-  .ad { width:100%; max-width:420px; min-height:60px; margin:8px 0; background:#ffffff0d; border:1px dashed #ffffff30;
-        border-radius:8px; display:flex; align-items:center; justify-content:center; font-size:.75rem; color:#8895a7; overflow:hidden; }
-  .bar { width:100%; max-width:420px; display:flex; justify-content:space-between; font-weight:600; margin-bottom:6px; }
+  h1 { margin:4px 0 8px; font-size:1.6rem; letter-spacing:2px; }
+  .ad { width:100%; max-width:420px; min-height:60px; margin:8px 0; background:#ff7eb614; border:1px dashed #ff7eb655;
+        border-radius:12px; display:flex; align-items:center; justify-content:center; font-size:.75rem; color:#b08795; overflow:hidden; }
+  .bar { width:100%; max-width:420px; display:flex; justify-content:space-between; margin-bottom:8px; font-weight:700; }
+  .pill { background:var(--card); border-radius:999px; padding:4px 16px; }
   .wrap { position:relative; width:100%; max-width:420px; }
-  canvas { width:100%; aspect-ratio:1; background:var(--card); border-radius:12px; display:block; touch-action:none; }
-  .overlay { position:absolute; inset:0; background:#000b; border-radius:12px; display:flex; flex-direction:column;
+  canvas { width:100%; aspect-ratio:1; border-radius:20px; display:block; touch-action:none;
+           border:4px solid #ffc2d9; box-shadow:0 6px 18px #ff7eb633; background:#fff7fa; }
+  .overlay { position:absolute; inset:0; background:#fff1f5ee; border-radius:20px; display:flex; flex-direction:column;
              align-items:center; justify-content:center; gap:10px; text-align:center; padding:16px; }
   .overlay.hidden { display:none; }
-  button { background:var(--accent); color:#06210f; border:0; border-radius:10px; padding:10px 22px; font-size:1rem; font-weight:700; cursor:pointer; }
-  button.ghost { background:transparent; color:var(--text); border:1px solid #ffffff50; }
-  .pad { display:grid; grid-template-columns:repeat(3,64px); grid-template-rows:repeat(2,56px); gap:6px; margin-top:12px; }
-  .pad button { padding:0; font-size:1.3rem; background:var(--card); color:var(--text); border:1px solid #ffffff20; }
+  .big { font-size:3rem; line-height:1; }
+  button { background:var(--accent); color:#fff; border:0; border-radius:999px; padding:10px 26px; font-size:1rem; font-weight:700; cursor:pointer;
+           box-shadow:0 4px 0 #e0599a; }
+  button:active { transform:translateY(2px); box-shadow:0 2px 0 #e0599a; }
+  button.ghost { background:#fff; color:var(--accent); border:2px solid var(--accent); box-shadow:none; }
+  button.hidden { display:none; }
+  .pad { display:grid; grid-template-columns:repeat(3,64px); grid-template-rows:repeat(2,56px); gap:8px; margin-top:12px; }
+  .pad button { padding:0; font-size:1.3rem; background:#fff; color:var(--accent); border:2px solid #ffc2d9; box-shadow:0 3px 0 #ffc2d9; border-radius:16px; }
   .pad .up { grid-column:2; } .pad .left { grid-column:1; grid-row:2; } .pad .down { grid-column:2; grid-row:2; } .pad .right { grid-column:3; grid-row:2; }
   @media (hover:hover) and (pointer:fine) { .pad { display:none; } }
-  footer { margin-top:auto; padding:12px; font-size:.75rem; color:#8895a7; }
+  footer { margin-top:auto; padding:12px; font-size:.75rem; color:#b08795; }
 </style>
 </head>
 <body>
-  <h1>🐍 貪食蛇</h1>
+  <h1>🐍 可愛貪食蛇 🍓</h1>
 
-  <!-- ====== 變現步驟 2:頂部橫幅廣告位 ======
-       把 div 內容換成 AdSense 給你的 <ins class="adsbygoogle" ...> 程式碼 -->
+  <!-- ====== 廣告位 1:頂部橫幅 ====== -->
   <div class="ad" id="ad-top">廣告位(頂部橫幅 320x50)</div>
 
-  <div class="bar"><span>分數:<b id="score">0</b></span><span>最高分:<b id="best">0</b></span></div>
+  <div class="bar"><span class="pill">🍎 分數 <b id="score">0</b></span><button class="ghost" id="muteBtn" style="padding:2px 12px;box-shadow:none" aria-label="音效開關">🔊</button><span class="pill">👑 最高 <b id="best">0</b></span></div>
 
   <div class="wrap">
-    <canvas id="c" width="400" height="400"></canvas>
+    <canvas id="c" width="800" height="800"></canvas>
     <div class="overlay" id="overlay">
-      <h2 id="ovTitle" style="margin:0">準備好了嗎?</h2>
-      <div id="ovMsg">方向鍵 / WASD / 滑動螢幕控制</div>
+      <div class="big" id="ovEmoji">🐍</div>
+      <h2 id="ovTitle" style="margin:0">小蛇肚子餓了~</h2>
+      <div id="ovMsg">方向鍵 / WASD / 滑動螢幕,幫牠找水果吃!</div>
       <button id="startBtn">開始遊戲</button>
       <button class="ghost hidden" id="shareBtn">分享我的分數</button>
     </div>
@@ -61,20 +67,51 @@
     <button class="right" data-d="right">▶</button>
   </div>
 
-  <!-- ====== 變現步驟 3:遊戲下方廣告位(曝光最高的位置之一) ====== -->
+  <!-- ====== 廣告位 2:遊戲下方 ====== -->
   <div class="ad" id="ad-bottom">廣告位(遊戲下方 300x250)</div>
 
-  <footer>© 2026 貪食蛇小遊戲</footer>
+  <footer>© 2026 小遊戲專區</footer>
 
 <script>
 (() => {
   const N = 20, S = 400 / N;
   const cv = document.getElementById('c'), ctx = cv.getContext('2d');
+  ctx.scale(2, 2);
   const $ = id => document.getElementById(id);
   const overlay = $('overlay'), startBtn = $('startBtn'), shareBtn = $('shareBtn');
+  const FOODS = ['🍎','🍓','🍒','🍑','🍩','🍰','🍪','🍇'];
 
-  let snake, dir, nextDir, food, score, timer, running = false, plays = 0;
-  let best = 0;
+  // ====== 音效(Web Audio,不需要音檔) ======
+  let audio = null, muted = false;
+  try { muted = localStorage.getItem('snakeMute') === '1'; } catch(e) {}
+  const muteBtn = $('muteBtn');
+  muteBtn.textContent = muted ? '🔇' : '🔊';
+  muteBtn.onclick = () => {
+    muted = !muted;
+    muteBtn.textContent = muted ? '🔇' : '🔊';
+    try { localStorage.setItem('snakeMute', muted ? '1' : '0'); } catch(e) {}
+  };
+  function tone(freq, start, dur, type = 'sine', vol = 0.15) {
+    const o = audio.createOscillator(), g = audio.createGain();
+    o.type = type; o.frequency.value = freq;
+    const t0 = audio.currentTime + start;
+    g.gain.setValueAtTime(vol, t0);
+    g.gain.exponentialRampToValueAtTime(0.001, t0 + dur);
+    o.connect(g); g.connect(audio.destination);
+    o.start(t0); o.stop(t0 + dur);
+  }
+  function sfx(name) {
+    if (muted) return;
+    try {
+      audio = audio || new (window.AudioContext || window.webkitAudioContext)();
+      if (audio.state === 'suspended') audio.resume();
+      if (name === 'eat') { tone(660, 0, .09, 'triangle'); tone(990, .07, .12, 'triangle'); }
+      else if (name === 'start') { [523, 659, 784].forEach((f, i) => tone(f, i * .08, .12, 'triangle')); }
+      else if (name === 'over') { [523, 440, 349, 262].forEach((f, i) => tone(f, i * .14, .2, 'sine', .18)); }
+    } catch(e) {}
+  }
+
+  let snake, dir, nextDir, food, foodEmoji, score, timer, running = false, plays = 0, best = 0, particles = [];
   try { best = +localStorage.getItem('snakeBest') || 0; } catch(e) {}
   $('best').textContent = best;
 
@@ -83,23 +120,27 @@
   function reset() {
     snake = [[10,10],[9,10],[8,10]];
     dir = nextDir = DIRS.right;
-    score = 0; $('score').textContent = 0;
+    score = 0; $('score').textContent = 0; particles = [];
     placeFood();
   }
   function placeFood() {
     do { food = [Math.floor(Math.random()*N), Math.floor(Math.random()*N)]; }
     while (snake.some(s => s[0]===food[0] && s[1]===food[1]));
+    foodEmoji = FOODS[Math.floor(Math.random()*FOODS.length)];
   }
   function start() {
-    reset(); running = true; plays++;
+    reset(); running = true; plays++; sfx('start');
     overlay.classList.add('hidden');
     clearInterval(timer);
-    timer = setInterval(tick, 120);
-    draw();
+    timer = setInterval(tick, 130);
   }
   function speedUp() {
     clearInterval(timer);
-    timer = setInterval(tick, Math.max(55, 120 - score * 2));
+    timer = setInterval(tick, Math.max(65, 130 - score * 2));
+  }
+  function burst(x, y) {
+    for (let i = 0; i < 6; i++)
+      particles.push({ x:x*S+S/2, y:y*S+S/2, vx:(Math.random()-.5)*2, vy:-1-Math.random()*1.5, life:1, e:['💗','✨','⭐'][i%3] });
   }
   function tick() {
     dir = nextDir;
@@ -108,41 +149,85 @@
     snake.unshift(head);
     if (head[0]===food[0] && head[1]===food[1]) {
       score++; $('score').textContent = score;
+      burst(head[0], head[1]); sfx('eat');
       placeFood(); speedUp();
     } else snake.pop();
-    draw();
   }
-  function draw() {
-    ctx.clearRect(0,0,400,400);
-    ctx.fillStyle = '#f87171';
-    ctx.beginPath(); ctx.arc(food[0]*S+S/2, food[1]*S+S/2, S/2-2, 0, 7); ctx.fill();
-    snake.forEach((s,i) => {
-      ctx.fillStyle = i===0 ? '#86efac' : '#4ade80';
-      ctx.fillRect(s[0]*S+1, s[1]*S+1, S-2, S-2);
+
+  function render(t) {
+    // 棋盤背景
+    for (let r = 0; r < N; r++) for (let c = 0; c < N; c++) {
+      ctx.fillStyle = (r + c) % 2 ? '#fff7fa' : '#ffeaf1';
+      ctx.fillRect(c*S, r*S, S, S);
+    }
+    // 水果(上下輕輕彈跳)
+    ctx.font = `${S*0.85}px serif`; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+    ctx.fillText(foodEmoji, food[0]*S+S/2, food[1]*S+S/2 + Math.sin(t/180)*2 + 1);
+
+    // 蛇身:由尾到頭,漸層粉綠
+    for (let i = snake.length - 1; i >= 0; i--) {
+      const [x, y] = snake[i];
+      const k = i / Math.max(1, snake.length - 1);
+      ctx.fillStyle = i === 0 ? '#8be3a8' : `hsl(${145 - k*15}, 65%, ${72 + k*8}%)`;
+      ctx.beginPath(); ctx.arc(x*S+S/2, y*S+S/2, S*(i===0 ? 0.56 : 0.5), 0, 7); ctx.fill();
+      if (i > 0 && i % 2 === 0) { // 身上的小圓點花紋
+        ctx.fillStyle = '#ffffff88';
+        ctx.beginPath(); ctx.arc(x*S+S/2, y*S+S/2, S*0.14, 0, 7); ctx.fill();
+      }
+    }
+    // 蛇頭:眼睛、腮紅
+    const [hx, hy] = [snake[0][0]*S+S/2, snake[0][1]*S+S/2];
+    const f = dir, p = [-dir[1], dir[0]];
+    [-1, 1].forEach(sd => {
+      const ex = hx + f[0]*S*0.12 + p[0]*S*0.22*sd, ey = hy + f[1]*S*0.12 + p[1]*S*0.22*sd;
+      ctx.fillStyle = '#fff'; ctx.beginPath(); ctx.arc(ex, ey, S*0.17, 0, 7); ctx.fill();
+      ctx.fillStyle = '#3b2a33'; ctx.beginPath(); ctx.arc(ex + f[0]*S*0.05, ey + f[1]*S*0.05, S*0.09, 0, 7); ctx.fill();
+      ctx.fillStyle = '#ff9ec4aa';
+      ctx.beginPath(); ctx.arc(hx - f[0]*S*0.05 + p[0]*S*0.36*sd, hy - f[1]*S*0.05 + p[1]*S*0.36*sd, S*0.1, 0, 7); ctx.fill();
     });
+    // 小舌頭(閃爍)
+    if (Math.floor(t/400) % 2 === 0) {
+      ctx.strokeStyle = '#ff5c8a'; ctx.lineWidth = 2; ctx.lineCap = 'round';
+      ctx.beginPath(); ctx.moveTo(hx + f[0]*S*0.5, hy + f[1]*S*0.5); ctx.lineTo(hx + f[0]*S*0.85, hy + f[1]*S*0.85); ctx.stroke();
+    }
+    // 吃到水果的愛心星星
+    ctx.font = `${S*0.6}px serif`;
+    particles = particles.filter(q => q.life > 0);
+    particles.forEach(q => {
+      q.x += q.vx; q.y += q.vy; q.life -= 0.03;
+      ctx.globalAlpha = Math.max(0, q.life);
+      ctx.fillText(q.e, q.x, q.y);
+    });
+    ctx.globalAlpha = 1;
+    requestAnimationFrame(render);
   }
+
   function gameOver() {
-    running = false; clearInterval(timer);
+    running = false; clearInterval(timer); sfx('over');
     if (score > best) { best = score; $('best').textContent = best; try { localStorage.setItem('snakeBest', best); } catch(e) {} }
-    $('ovTitle').textContent = '遊戲結束';
-    $('ovMsg').textContent = `本局 ${score} 分|最高 ${best} 分`;
+    const [emoji, msg] = score < 5 ? ['🌱','加油加油,下次會更好!']
+                      : score < 15 ? ['🍎','不錯喔,小蛇吃得好飽!']
+                      : score < 30 ? ['✨','好厲害!你是貪吃蛇高手!']
+                      : ['🏆','太神啦!小蛇都要吃撐了!'];
+    $('ovEmoji').textContent = emoji;
+    $('ovTitle').textContent = '小蛇撞到啦~';
+    $('ovMsg').innerHTML = `${msg}<br>本局 ${score} 分|最高 ${best} 分`;
     startBtn.textContent = '再玩一次';
     shareBtn.classList.remove('hidden');
     overlay.classList.remove('hidden');
-    // ====== 變現步驟 4:遊戲結束是插入廣告的最佳時機 ======
-    // 例如每玩 3 局顯示一次插頁廣告:
-    // if (plays % 3 === 0) showInterstitialAd();
+    // ====== 廣告位 3:遊戲結束是插入廣告的好時機 ======
+    // 例如每玩 3 局顯示一次插頁廣告:if (plays % 3 === 0) showInterstitialAd();
   }
   function turn(name) {
     const d = DIRS[name];
-    if (d[0] + dir[0] !== 0 || d[1] + dir[1] !== 0) nextDir = d; // 禁止直接迴轉
+    if (d[0] + dir[0] !== 0 || d[1] + dir[1] !== 0) nextDir = d;
   }
 
   startBtn.onclick = start;
   shareBtn.onclick = async () => {
-    const text = `我在貪食蛇拿到 ${score} 分,來挑戰我!`;
+    const text = `我在可愛貪食蛇拿到 ${score} 分,來挑戰我!`;
     try {
-      if (navigator.share) await navigator.share({ title: '貪食蛇', text, url: location.href });
+      if (navigator.share) await navigator.share({ title:'可愛貪食蛇', text, url:location.href });
       else { await navigator.clipboard.writeText(text + ' ' + location.href); shareBtn.textContent = '已複製連結!'; }
     } catch(e) {}
   };
@@ -166,7 +251,8 @@
     }
   }, { passive:true });
 
-  reset(); draw();
+  reset();
+  requestAnimationFrame(render);
 })();
 </script>
 </body>
