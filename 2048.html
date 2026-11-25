@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+<title>可愛 2048 - 免費線上小遊戲</title>
+<meta name="description" content="超可愛的 2048 動物合併遊戲,線上免費玩,手機電腦都能玩,合出彩虹獨角獸!">
+<meta property="og:title" content="可愛 2048 - 免費線上小遊戲">
+<meta property="og:description" content="超可愛的 2048 動物合併遊戲,合出彩虹獨角獸!">
+
+<!-- ====== 變現:通過 AdSense 審核後,取消註解並換成你的 ID ======
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXXXXXXXXXXXXXX" crossorigin="anonymous"></script>
+-->
+
+<style>
+  :root { --bg:#fff1f5; --card:#ffe4ec; --accent:#ff7eb6; --text:#6b3a4e; --cell:#ffd3e2; }
+  * { box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+  body { margin:0; background:var(--bg); color:var(--text); font-family:"Noto Sans TC",system-ui,-apple-system,sans-serif;
+         display:flex; flex-direction:column; align-items:center; min-height:100vh; padding:12px; }
+  h1 { margin:4px 0 4px; font-size:1.6rem; letter-spacing:2px; }
+  nav { font-size:.85rem; margin-bottom:6px; }
+  nav a { color:#c06a8f; margin:0 8px; text-decoration:none; font-weight:600; }
+  nav a:hover { color:var(--accent); }
+  .ad { width:100%; max-width:420px; min-height:60px; margin:8px 0; background:#ff7eb614; border:1px dashed #ff7eb655;
+        border-radius:12px; display:flex; align-items:center; justify-content:center; font-size:.75rem; color:#b08795; overflow:hidden; }
+  .bar { width:100%; max-width:420px; display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; gap:6px; font-weight:700; }
+  .box { background:var(--card); border-radius:16px; padding:4px 14px; text-align:center; min-width:76px; }
+  .box small { display:block; font-size:.65rem; color:#b08795; font-weight:500; }
+  .wrap { position:relative; width:100%; max-width:420px; }
+  #board { display:grid; grid-template-columns:repeat(4,1fr); gap:8px; background:var(--card); padding:8px; border-radius:20px;
+           aspect-ratio:1; touch-action:none; user-select:none; border:4px solid #ffc2d9; box-shadow:0 6px 18px #ff7eb633; }
+  .cell { background:var(--cell); border-radius:14px; display:flex; flex-direction:column; align-items:center; justify-content:center; line-height:1.05; }
+  .cell .em { font-size:clamp(1.4rem,8vw,2.2rem); }
+  .cell .nm { font-size:clamp(.6rem,3vw,.8rem); font-weight:800; color:#6b3a4e; opacity:.75; }
+  .t2{background:#fff3c4}.t4{background:#ffe0b2}.t8{background:#ffc8dd}.t16{background:#ffb3c6}.t32{background:#e0c3fc}
+  .t64{background:#c8b6ff}.t128{background:#b8e0ff}.t256{background:#a0e7e5}.t512{background:#b4f8c8}.t1024{background:#fbe7c6}
+  .t2048{background:#ffd166;box-shadow:0 0 14px #ffd166}.tbig{background:#ff9ec4}
+  .new { animation:pop .18s ease-out; } .merge { animation:pop .22s ease-out; }
+  @keyframes pop { 0%{transform:scale(.55)} 70%{transform:scale(1.15)} 100%{transform:scale(1)} }
+  .overlay { position:absolute; inset:0; background:#fff1f5ee; border-radius:20px; display:flex; flex-direction:column;
+             align-items:center; justify-content:center; gap:10px; text-align:center; padding:16px; }
+  .overlay.hidden { display:none; }
+  .big { font-size:3rem; line-height:1; }
+  button { background:var(--accent); color:#fff; border:0; border-radius:999px; padding:10px 22px; font-size:1rem; font-weight:700; cursor:pointer;
+           box-shadow:0 4px 0 #e0599a; }
+  button:active { transform:translateY(2px); box-shadow:0 2px 0 #e0599a; }
+  button.ghost { background:#fff; color:var(--accent); border:2px solid var(--accent); box-shadow:none; }
+  button.hidden { display:none; }
+  .tools { width:100%; max-width:420px; display:flex; justify-content:space-between; align-items:center; margin-top:10px; font-size:.8rem; color:#b08795; }
+  footer { margin-top:auto; padding:12px; font-size:.75rem; color:#b08795; }
+</style>
+</head>
+<body>
+  <h1>🐣 可愛 2048 🌈</h1>
+  <nav><a href="index.html">🐍 貪食蛇</a><a href="2048.html">🐣 2048</a></nav>
+
+  <!-- ====== 廣告位 1:頂部橫幅 ====== -->
+  <div class="ad" id="ad-top">廣告位(頂部橫幅 320x50)</div>
+
+  <div class="bar">
+    <div class="box"><small>分數</small><span id="score">0</span></div>
+    <button id="newBtn">新遊戲</button>
+    <button class="ghost" id="muteBtn" style="padding:4px 12px;box-shadow:none" aria-label="音效開關">🔊</button>
+    <div class="box"><small>最高分</small><span id="best">0</span></div>
+  </div>
+
+  <div class="wrap">
+    <div id="board"></div>
+    <div class="overlay hidden" id="overlay">
+      <div class="big" id="ovEmoji">🌈</div>
+      <h2 id="ovTitle" style="margin:0"></h2>
+      <div id="ovMsg"></div>
+      <button id="ovBtn">再玩一次</button>
+      <button class="ghost hidden" id="shareBtn">分享我的分數</button>
+    </div>
+  </div>
+
+  <div class="tools"><span>方向鍵 / WASD / 滑動螢幕</span><span>🐣→🐥→🐰→…→🦄→🌈</span></div>
+
+  <!-- ====== 廣告位 2:遊戲下方 ====== -->
+  <div class="ad" id="ad-bottom">廣告位(遊戲下方 300x250)</div>
+
+  <footer>© 2026 小遊戲專區</footer>
+
+<script>
+(() => {
+  const $ = id => document.getElementById(id);
+  const boardEl = $('board'), overlay = $('overlay');
+  const EMOJI = { 2:'🐣', 4:'🐥', 8:'🐰', 16:'🐱', 32:'🐶', 64:'🦊', 128:'🐼', 256:'🐨', 512:'🦁', 1024:'🦄', 2048:'🌈', 4096:'🌟', 8192:'👑', 16384:'💎', 32768:'🚀' };
+  let g, score, best = 0, celebrated = 0, shareText = '', over, newPos = null, mergedSet = new Set(), games = 0;
+  try { best = +localStorage.getItem('best2048') || 0; } catch(e) {}
+  $('best').textContent = best;
+
+  // ====== 音效(Web Audio,不需要音檔) ======
+  let audio = null, muted = false;
+  try { muted = localStorage.getItem('mute2048') === '1'; } catch(e) {}
+  const muteBtn = $('muteBtn');
+  muteBtn.textContent = muted ? '🔇' : '🔊';
+  muteBtn.onclick = () => {
+    muted = !muted;
+    muteBtn.textContent = muted ? '🔇' : '🔊';
+    try { localStorage.setItem('mute2048', muted ? '1' : '0'); } catch(e) {}
+  };
+  function tone(freq, start, dur, type = 'sine', vol = 0.15) {
+    const o = audio.createOscillator(), gn = audio.createGain();
+    o.type = type; o.frequency.value = freq;
+    const t0 = audio.currentTime + start;
+    gn.gain.setValueAtTime(vol, t0);
+    gn.gain.exponentialRampToValueAtTime(0.001, t0 + dur);
+    o.connect(gn); gn.connect(audio.destination);
+    o.start(t0); o.stop(t0 + dur);
+  }
+  function sfx(name, v) {
+    if (muted) return;
+    try {
+      audio = audio || new (window.AudioContext || window.webkitAudioContext)();
+      if (audio.state === 'suspended') audio.resume();
+      if (name === 'move') tone(240, 0, .06, 'triangle', .07);
+      else if (name === 'merge') { // 合併的數字越大,音越高
+        const f = 380 + Math.log2(v) * 55;
+        tone(f, 0, .1, 'triangle'); tone(f * 1.5, .06, .14, 'triangle');
+      }
+      else if (name === 'start') [523, 659, 784].forEach((f, i) => tone(f, i * .08, .12, 'triangle'));
+      else if (name === 'win') [523, 659, 784, 1047, 1319].forEach((f, i) => tone(f, i * .1, .22, 'triangle', .18));
+      else if (name === 'over') [523, 440, 349, 262].forEach((f, i) => tone(f, i * .14, .2, 'sine', .18));
+    } catch(e) {}
+  }
+
+  function init() {
+    g = Array.from({length:4}, () => Array(4).fill(0));
+    score = 0; celebrated = 0; shareText = ''; over = false; games++;
+    $('score').textContent = 0;
+    overlay.classList.add('hidden');
+    addTile(); addTile(); render();
+    if (games > 1) sfx('start');
+  }
+  function addTile() {
+    const empty = [];
+    for (let r=0;r<4;r++) for (let c=0;c<4;c++) if (!g[r][c]) empty.push([r,c]);
+    if (!empty.length) return;
+    const [r,c] = empty[Math.floor(Math.random()*empty.length)];
+    g[r][c] = Math.random() < 0.9 ? 2 : 4;
+    newPos = r*4 + c;
+  }
+  const pos = (d,i,j) => d==='left' ? [i,j] : d==='right' ? [i,3-j] : d==='up' ? [j,i] : [3-j,i];
+
+  function move(d) {
+    if (over) return;
+    let moved = false, gain = 0, maxMerged = 0; mergedSet = new Set(); newPos = null;
+    for (let i=0;i<4;i++) {
+      const cells = [0,1,2,3].map(j => pos(d,i,j));
+      const line = cells.map(([r,c]) => g[r][c]);
+      const arr = line.filter(Boolean), out = [], mergedAt = [];
+      for (let k=0;k<arr.length;k++) {
+        if (arr[k] === arr[k+1]) {
+          const nv = arr[k]*2;
+          out.push(nv); gain += nv; maxMerged = Math.max(maxMerged, nv);
+          mergedAt.push(out.length-1); k++;
+        } else out.push(arr[k]);
+      }
+      while (out.length < 4) out.push(0);
+      out.forEach((v,j) => {
+        const [r,c] = cells[j];
+        if (g[r][c] !== v) moved = true;
+        g[r][c] = v;
+        if (mergedAt.includes(j)) mergedSet.add(r*4+c);
+      });
+    }
+    if (!moved) return;
+    score += gain; $('score').textContent = score;
+    if (score > best) { best = score; $('best').textContent = best; try { localStorage.setItem('best2048', best); } catch(e) {} }
+    addTile(); render();
+    // 每達成一個新的里程碑(2048、4096、8192…)都會慶祝並邀請朋友挑戰
+    const top = Math.max(...g.flat());
+    if (top >= 2048 && top > celebrated && canMove()) {
+      celebrated = top; sfx('win');
+      const em = EMOJI[top] || '🌟';
+      shareText = `我在可愛 2048 合出了 ${em} ${top}!目前 ${score} 分,敢來挑戰嗎?`;
+      return showEnd(em, top === 2048 ? '你合出彩虹啦!' : `太強了!合出 ${top}!`, `目前 ${score} 分,繼續往更高挑戰吧!`, '繼續挑戰');
+    }
+    if (!canMove()) {
+      over = true; sfx('over');
+      shareText = `我在可愛 2048 拿到 ${score} 分${top >= 2048 ? `,還合出了 ${EMOJI[top] || '🌟'} ${top}` : ''},敢來挑戰嗎?`;
+      const [em, msg] = score < 500 ? ['🌱','再接再厲,下次會更好!'] : score < 2000 ? ['🐰','不錯喔,小動物們都開心!'] : score < 6000 ? ['🦄','好厲害!你是合成高手!'] : ['🏆','太神啦!全動物園都崇拜你!'];
+      return showEnd(em, '動物們擠滿啦~', `${msg}<br>本局 ${score} 分|最高 ${best} 分`, '再玩一次');
+    }
+    sfx(maxMerged ? 'merge' : 'move', maxMerged);
+  }
+  function canMove() {
+    for (let r=0;r<4;r++) for (let c=0;c<4;c++) {
+      if (!g[r][c]) return true;
+      if (c<3 && g[r][c]===g[r][c+1]) return true;
+      if (r<3 && g[r][c]===g[r+1][c]) return true;
+    }
+    return false;
+  }
+  function render() {
+    boardEl.innerHTML = '';
+    g.flat().forEach((v,idx) => {
+      const el = document.createElement('div');
+      el.className = 'cell' + (v ? ' ' + (v>2048 ? 'tbig' : 't'+v) : '');
+      if (v) {
+        el.innerHTML = `<span class="em">${EMOJI[v] || '🌟'}</span><span class="nm">${v}</span>`;
+        if (idx===newPos) el.classList.add('new'); else if (mergedSet.has(idx)) el.classList.add('merge');
+      }
+      boardEl.appendChild(el);
+    });
+  }
+  function showEnd(emoji, title, msg, btnText) {
+    $('ovEmoji').textContent = emoji; $('ovTitle').textContent = title; $('ovMsg').innerHTML = msg; $('ovBtn').textContent = btnText;
+    $('shareBtn').textContent = '邀請朋友來挑戰';
+    $('shareBtn').classList.remove('hidden');
+    overlay.classList.remove('hidden');
+    // ====== 廣告位 3:遊戲結束是插入廣告的好時機 ======
+    // 例如每玩 3 局顯示一次插頁廣告:if (over && games % 3 === 0) showInterstitialAd();
+  }
+
+  $('ovBtn').onclick = () => { if (over) init(); else overlay.classList.add('hidden'); };
+  $('newBtn').onclick = init;
+  $('shareBtn').onclick = async () => {
+    const text = shareText || `我在可愛 2048 拿到 ${score} 分,來挑戰我!`;
+    try {
+      if (navigator.share) await navigator.share({ title:'可愛 2048', text, url:location.href });
+      else { await navigator.clipboard.writeText(text + ' ' + location.href); $('shareBtn').textContent = '已複製連結!'; }
+    } catch(e) {}
+  };
+
+  document.addEventListener('keydown', e => {
+    const m = { ArrowUp:'up', w:'up', W:'up', ArrowDown:'down', s:'down', S:'down',
+                ArrowLeft:'left', a:'left', A:'left', ArrowRight:'right', d:'right', D:'right' }[e.key];
+    if (m) { e.preventDefault(); move(m); }
+  });
+  let sx, sy;
+  boardEl.addEventListener('touchstart', e => { sx = e.touches[0].clientX; sy = e.touches[0].clientY; }, { passive:true });
+  boardEl.addEventListener('touchend', e => {
+    if (sx == null) return;
+    const dx = e.changedTouches[0].clientX - sx, dy = e.changedTouches[0].clientY - sy;
+    if (Math.max(Math.abs(dx), Math.abs(dy)) > 24) move(Math.abs(dx) > Math.abs(dy) ? (dx>0?'right':'left') : (dy>0?'down':'up'));
+    sx = null;
+  }, { passive:true });
+
+  init();
+})();
+</script>
+</body>
+</html>
