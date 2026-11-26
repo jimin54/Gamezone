@@ -2,11 +2,12 @@
 <html lang="zh-Hant">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
-<title>可愛貪食蛇 - 免費線上小遊戲</title>
-<meta name="description" content="超可愛的貪食蛇線上免費玩,手機電腦都能玩,吃水果、拿高分!">
-<meta property="og:title" content="可愛貪食蛇 - 免費線上小遊戲">
-<meta property="og:description" content="超可愛的貪食蛇線上免費玩,吃水果、拿高分!">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>小遊戲專區 - 免費線上可愛小遊戲(貪食蛇、2048、翻翻樂、打磚塊)</title>
+<meta name="description" content="小遊戲專區提供免費線上可愛小遊戲:貪食蛇、2048、記憶翻翻樂、打磚塊。不用下載、不用註冊,手機電腦都能玩,還有音效與分享挑戰功能。">
+<meta property="og:type" content="website">
+<meta property="og:title" content="小遊戲專區 - 免費線上可愛小遊戲">
+<meta property="og:description" content="貪食蛇、2048、翻翻樂、打磚塊,免費線上玩,手機電腦都能玩!">
 
 <!-- ====== 變現:通過 AdSense 審核後,取消註解並換成你的 ID ======
 <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXXXXXXXXXXXXXX" crossorigin="anonymous"></script>
@@ -14,249 +15,138 @@
 
 <style>
   :root { --bg:#fff1f5; --card:#ffe4ec; --accent:#ff7eb6; --text:#6b3a4e; }
-  * { box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
-  body { margin:0; background:var(--bg); color:var(--text); font-family:"Noto Sans TC",system-ui,-apple-system,sans-serif;
-         display:flex; flex-direction:column; align-items:center; min-height:100vh; padding:12px; }
-  h1 { margin:4px 0 8px; font-size:1.6rem; letter-spacing:2px; }
-  nav { font-size:.85rem; margin-bottom:6px; }
-  nav a { color:#c06a8f; margin:0 8px; text-decoration:none; font-weight:600; }
-  nav a:hover { color:var(--accent); }
-  .ad { width:100%; max-width:420px; min-height:60px; margin:8px 0; background:#ff7eb614; border:1px dashed #ff7eb655;
-        border-radius:12px; display:flex; align-items:center; justify-content:center; font-size:.75rem; color:#b08795; overflow:hidden; }
-  .bar { width:100%; max-width:420px; display:flex; justify-content:space-between; margin-bottom:8px; font-weight:700; }
-  .pill { background:var(--card); border-radius:999px; padding:4px 16px; }
-  .wrap { position:relative; width:100%; max-width:420px; }
-  canvas { width:100%; aspect-ratio:1; border-radius:20px; display:block; touch-action:none;
-           border:4px solid #ffc2d9; box-shadow:0 6px 18px #ff7eb633; background:#fff7fa; }
-  .overlay { position:absolute; inset:0; background:#fff1f5ee; border-radius:20px; display:flex; flex-direction:column;
-             align-items:center; justify-content:center; gap:10px; text-align:center; padding:16px; }
-  .overlay.hidden { display:none; }
-  .big { font-size:3rem; line-height:1; }
-  button { background:var(--accent); color:#fff; border:0; border-radius:999px; padding:10px 26px; font-size:1rem; font-weight:700; cursor:pointer;
-           box-shadow:0 4px 0 #e0599a; }
-  button:active { transform:translateY(2px); box-shadow:0 2px 0 #e0599a; }
-  button.ghost { background:#fff; color:var(--accent); border:2px solid var(--accent); box-shadow:none; }
-  button.hidden { display:none; }
-  .pad { display:grid; grid-template-columns:repeat(3,64px); grid-template-rows:repeat(2,56px); gap:8px; margin-top:12px; }
-  .pad button { padding:0; font-size:1.3rem; background:#fff; color:var(--accent); border:2px solid #ffc2d9; box-shadow:0 3px 0 #ffc2d9; border-radius:16px; }
-  .pad .up { grid-column:2; } .pad .left { grid-column:1; grid-row:2; } .pad .down { grid-column:2; grid-row:2; } .pad .right { grid-column:3; grid-row:2; }
-  @media (hover:hover) and (pointer:fine) { .pad { display:none; } }
-  footer { margin-top:auto; padding:12px; font-size:.75rem; color:#b08795; }
+  * { box-sizing:border-box; }
+  body { margin:0; background:var(--bg); color:var(--text); font-family:"Noto Sans TC",system-ui,-apple-system,sans-serif; line-height:1.8; }
+  .page { max-width:780px; margin:0 auto; padding:14px 16px 28px; }
+  header { text-align:center; padding:8px 0 2px; }
+  h1 { margin:6px 0 4px; font-size:1.8rem; letter-spacing:2px; }
+  .sub { margin:0 0 6px; color:#9a6a7e; }
+  nav { text-align:center; font-size:.9rem; margin:6px 0 14px; line-height:1.9; }
+  nav a { color:#c06a8f; margin:0 8px; text-decoration:none; font-weight:600; white-space:nowrap; }
+  nav a:hover, nav a.on { color:var(--accent); }
+  .box { background:#fff; border:2px solid #ffe0ea; border-radius:20px; padding:14px 18px; margin-top:16px; }
+  .box h2 { margin:0 0 6px; font-size:1.15rem; }
+  .box p { margin:4px 0; }
+  .grid { display:grid; grid-template-columns:repeat(auto-fit, minmax(250px, 1fr)); gap:14px; margin-top:16px; }
+  .card { background:#fff; border:3px solid #ffc2d9; border-radius:22px; padding:16px; text-decoration:none; color:inherit;
+          display:flex; flex-direction:column; gap:6px; box-shadow:0 6px 18px #ff7eb622; transition:transform .15s; }
+  .card:hover { transform:translateY(-3px); }
+  .card .ico { font-size:2.8rem; line-height:1.1; }
+  .card h3 { margin:0; font-size:1.15rem; }
+  .card p { margin:0; font-size:.9rem; color:#8a5c70; }
+  .tags span { display:inline-block; background:var(--card); border-radius:999px; padding:0 10px; font-size:.75rem; margin:2px 4px 0 0; }
+  .card .best { font-size:.8rem; color:#b08795; min-height:1.4em; }
+  .btn { margin-top:auto; align-self:flex-start; background:var(--accent); color:#fff; border-radius:999px; padding:8px 22px;
+         font-weight:700; box-shadow:0 4px 0 #e0599a; display:inline-block; }
+  .ad { min-height:60px; margin:16px 0 0; background:#ff7eb614; border:1px dashed #ff7eb655; border-radius:12px;
+        display:flex; align-items:center; justify-content:center; font-size:.75rem; color:#b08795; overflow:hidden; }
+  .feat { display:grid; grid-template-columns:repeat(auto-fit, minmax(200px, 1fr)); gap:10px; margin-top:8px; }
+  .feat div { background:#fff7fa; border-radius:14px; padding:10px 12px; font-size:.92rem; }
+  dt { font-weight:700; margin-top:10px; color:#e0599a; }
+  dd { margin:2px 0 0; }
+  footer { text-align:center; padding:18px 12px 6px; font-size:.78rem; color:#b08795; line-height:1.9; }
+  footer a { color:#c06a8f; text-decoration:none; }
 </style>
 </head>
 <body>
-  <h1>🐍 可愛貪食蛇 🍓</h1>
-  <nav><a href="index.html">🐍 貪食蛇</a><a href="2048.html">🐣 2048</a><a href="memory.html">🐰 翻翻樂</a><a href="breakout.html">🧱 打磚塊</a></nav>
+<div class="page">
+  <header>
+    <h1>🎮 小遊戲專區 🌸</h1>
+    <p class="sub">免費線上可愛小遊戲,打開就能玩,手機電腦都 OK</p>
+  </header>
+
+  <nav>
+    <a class="on" href="index.html">🏠 首頁</a><a href="snake.html">🐍 貪食蛇</a><a href="2048.html">🐣 2048</a><a href="memory.html">🐰 翻翻樂</a><a href="breakout.html">🧱 打磚塊</a>
+  </nav>
 
   <!-- ====== 廣告位 1:頂部橫幅 ====== -->
-  <div class="ad" id="ad-top">廣告位(頂部橫幅 320x50)</div>
+  <div class="ad" id="ad-top">廣告位(頂部橫幅)</div>
 
-  <div class="bar"><span class="pill">🍎 分數 <b id="score">0</b></span><button class="ghost" id="muteBtn" style="padding:2px 12px;box-shadow:none" aria-label="音效開關">🔊</button><span class="pill">👑 最高 <b id="best">0</b></span></div>
+  <div class="box">
+    <h2>歡迎來到小遊戲專區</h2>
+    <p>這裡收集了幾款輕鬆、可愛、一玩就上手的免費小遊戲。每一款都不用下載、不用註冊,打開網頁就能玩,很適合在通勤、排隊或休息時打發幾分鐘。</p>
+    <p>所有遊戲都針對手機操作做過調整,也支援電腦鍵盤與滑鼠,並加入了輕快的音效和可以邀請朋友挑戰的分享功能。挑一款開始玩吧!</p>
+  </div>
 
-  <div class="wrap">
-    <canvas id="c" width="800" height="800"></canvas>
-    <div class="overlay" id="overlay">
-      <div class="big" id="ovEmoji">🐍</div>
-      <h2 id="ovTitle" style="margin:0">小蛇肚子餓了~</h2>
-      <div id="ovMsg">方向鍵 / WASD / 滑動螢幕,幫牠找水果吃!</div>
-      <button id="startBtn">開始遊戲</button>
-      <button class="ghost hidden" id="shareBtn">分享我的分數</button>
+  <div class="grid">
+    <a class="card" href="snake.html">
+      <div class="ico">🐍</div>
+      <h3>可愛貪食蛇</h3>
+      <p>操控圓滾滾的小蛇吃水果和甜點,越吃越長、速度越快,小心別撞到自己!</p>
+      <div class="tags"><span>經典</span><span>反應</span><span>單手可玩</span></div>
+      <div class="best" id="b-snake"></div>
+      <span class="btn">開始玩</span>
+    </a>
+    <a class="card" href="2048.html">
+      <div class="ico">🐣</div>
+      <h3>可愛 2048</h3>
+      <p>滑動合併相同的小動物,從小雞一路合成彩虹,每個里程碑都能分享給朋友。</p>
+      <div class="tags"><span>益智</span><span>策略</span><span>可無限挑戰</span></div>
+      <div class="best" id="b-2048"></div>
+      <span class="btn">開始玩</span>
+    </a>
+    <a class="card" href="memory.html">
+      <div class="ico">🐰</div>
+      <h3>可愛翻翻樂</h3>
+      <p>翻開兩張一樣的動物就配對成功,三種難度,挑戰用最少步數全部配完。</p>
+      <div class="tags"><span>記憶力</span><span>三種難度</span><span>適合全家</span></div>
+      <div class="best" id="b-memory"></div>
+      <span class="btn">開始玩</span>
+    </a>
+    <a class="card" href="breakout.html">
+      <div class="ico">🧱</div>
+      <h3>可愛打磚塊</h3>
+      <p>用貓咪小板反彈小球打碎磚塊,接住愛心和糖果道具,闖過一關又一關。</p>
+      <div class="tags"><span>動作</span><span>闖關</span><span>道具</span></div>
+      <div class="best" id="b-breakout"></div>
+      <span class="btn">開始玩</span>
+    </a>
+  </div>
+
+  <!-- ====== 廣告位 2:遊戲卡片下方 ====== -->
+  <div class="ad" id="ad-mid">廣告位(內容下方)</div>
+
+  <div class="box">
+    <h2>為什麼選擇小遊戲專區?</h2>
+    <div class="feat">
+      <div>🆓 <b>完全免費</b><br>不用付費、不用註冊帳號。</div>
+      <div>📱 <b>手機優先</b><br>滑動、點擊都針對手機調整,電腦也能玩。</div>
+      <div>🔊 <b>可愛音效</b><br>每款遊戲都有音效,也能一鍵靜音。</div>
+      <div>🏆 <b>挑戰朋友</b><br>一鍵分享分數,邀請朋友來比高低。</div>
     </div>
   </div>
 
-  <div class="pad">
-    <button class="up" data-d="up">▲</button>
-    <button class="left" data-d="left">◀</button>
-    <button class="down" data-d="down">▼</button>
-    <button class="right" data-d="right">▶</button>
+  <div class="box">
+    <h2>常見問題</h2>
+    <dl>
+      <dt>這些遊戲真的免費嗎?需要下載或註冊嗎?</dt>
+      <dd>全部免費,也不需要下載或註冊,用瀏覽器打開網頁就能玩。</dd>
+      <dt>手機和電腦都可以玩嗎?</dt>
+      <dd>可以。手機用手指滑動或點擊,電腦可以用鍵盤或滑鼠,每款遊戲頁面都有操作說明。</dd>
+      <dt>我的最高分會被記錄嗎?</dt>
+      <dd>最高分會儲存在你自己裝置的瀏覽器裡(不會上傳到我們的伺服器)。如果清除瀏覽資料或換了裝置,紀錄就會消失。詳情請見<a href="privacy.html">隱私權政策</a>。</dd>
+      <dt>遊戲沒有聲音怎麼辦?</dt>
+      <dd>請先確認遊戲畫面上的 🔊 按鈕沒有被關掉,手機也要確認沒有開啟靜音模式。瀏覽器通常要等你點過一次畫面(例如按下開始)才會播放聲音。</dd>
+      <dt>發現問題或想建議新遊戲,要怎麼告訴你們?</dt>
+      <dd>歡迎到<a href="contact.html">聯絡我們</a>頁面留下意見。</dd>
+    </dl>
   </div>
 
-  <!-- ====== 廣告位 2:遊戲下方 ====== -->
-  <div class="ad" id="ad-bottom">廣告位(遊戲下方 300x250)</div>
-
-  <footer>© 2026 小遊戲專區</footer>
+  <footer>
+    <a href="about.html">關於我們</a> · <a href="privacy.html">隱私權政策</a> · <a href="contact.html">聯絡我們</a><br>
+    © 2026 小遊戲專區
+  </footer>
+</div>
 
 <script>
 (() => {
-  const N = 20, S = 400 / N;
-  const cv = document.getElementById('c'), ctx = cv.getContext('2d');
-  ctx.scale(2, 2);
-  const $ = id => document.getElementById(id);
-  const overlay = $('overlay'), startBtn = $('startBtn'), shareBtn = $('shareBtn');
-  const FOODS = ['🍎','🍓','🍒','🍑','🍩','🍰','🍪','🍇'];
-
-  // ====== 音效(Web Audio,不需要音檔) ======
-  let audio = null, muted = false;
-  try { muted = localStorage.getItem('snakeMute') === '1'; } catch(e) {}
-  const muteBtn = $('muteBtn');
-  muteBtn.textContent = muted ? '🔇' : '🔊';
-  muteBtn.onclick = () => {
-    muted = !muted;
-    muteBtn.textContent = muted ? '🔇' : '🔊';
-    try { localStorage.setItem('snakeMute', muted ? '1' : '0'); } catch(e) {}
-  };
-  function tone(freq, start, dur, type = 'sine', vol = 0.15) {
-    const o = audio.createOscillator(), g = audio.createGain();
-    o.type = type; o.frequency.value = freq;
-    const t0 = audio.currentTime + start;
-    g.gain.setValueAtTime(vol, t0);
-    g.gain.exponentialRampToValueAtTime(0.001, t0 + dur);
-    o.connect(g); g.connect(audio.destination);
-    o.start(t0); o.stop(t0 + dur);
-  }
-  function sfx(name) {
-    if (muted) return;
-    try {
-      audio = audio || new (window.AudioContext || window.webkitAudioContext)();
-      if (audio.state === 'suspended') audio.resume();
-      if (name === 'eat') { tone(660, 0, .09, 'triangle'); tone(990, .07, .12, 'triangle'); }
-      else if (name === 'start') { [523, 659, 784].forEach((f, i) => tone(f, i * .08, .12, 'triangle')); }
-      else if (name === 'over') { [523, 440, 349, 262].forEach((f, i) => tone(f, i * .14, .2, 'sine', .18)); }
-    } catch(e) {}
-  }
-
-  let snake, dir, nextDir, food, foodEmoji, score, timer, running = false, plays = 0, best = 0, particles = [];
-  try { best = +localStorage.getItem('snakeBest') || 0; } catch(e) {}
-  $('best').textContent = best;
-
-  const DIRS = { up:[0,-1], down:[0,1], left:[-1,0], right:[1,0] };
-
-  function reset() {
-    snake = [[10,10],[9,10],[8,10]];
-    dir = nextDir = DIRS.right;
-    score = 0; $('score').textContent = 0; particles = [];
-    placeFood();
-  }
-  function placeFood() {
-    do { food = [Math.floor(Math.random()*N), Math.floor(Math.random()*N)]; }
-    while (snake.some(s => s[0]===food[0] && s[1]===food[1]));
-    foodEmoji = FOODS[Math.floor(Math.random()*FOODS.length)];
-  }
-  function start() {
-    reset(); running = true; plays++; sfx('start');
-    overlay.classList.add('hidden');
-    clearInterval(timer);
-    timer = setInterval(tick, 130);
-  }
-  function speedUp() {
-    clearInterval(timer);
-    timer = setInterval(tick, Math.max(65, 130 - score * 2));
-  }
-  function burst(x, y) {
-    for (let i = 0; i < 6; i++)
-      particles.push({ x:x*S+S/2, y:y*S+S/2, vx:(Math.random()-.5)*2, vy:-1-Math.random()*1.5, life:1, e:['💗','✨','⭐'][i%3] });
-  }
-  function tick() {
-    dir = nextDir;
-    const head = [snake[0][0] + dir[0], snake[0][1] + dir[1]];
-    if (head[0]<0 || head[1]<0 || head[0]>=N || head[1]>=N || snake.some(s => s[0]===head[0] && s[1]===head[1])) return gameOver();
-    snake.unshift(head);
-    if (head[0]===food[0] && head[1]===food[1]) {
-      score++; $('score').textContent = score;
-      burst(head[0], head[1]); sfx('eat');
-      placeFood(); speedUp();
-    } else snake.pop();
-  }
-
-  function render(t) {
-    // 棋盤背景
-    for (let r = 0; r < N; r++) for (let c = 0; c < N; c++) {
-      ctx.fillStyle = (r + c) % 2 ? '#fff7fa' : '#ffeaf1';
-      ctx.fillRect(c*S, r*S, S, S);
-    }
-    // 水果(上下輕輕彈跳)
-    ctx.font = `${S*0.85}px serif`; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-    ctx.fillText(foodEmoji, food[0]*S+S/2, food[1]*S+S/2 + Math.sin(t/180)*2 + 1);
-
-    // 蛇身:由尾到頭,漸層粉綠
-    for (let i = snake.length - 1; i >= 0; i--) {
-      const [x, y] = snake[i];
-      const k = i / Math.max(1, snake.length - 1);
-      ctx.fillStyle = i === 0 ? '#8be3a8' : `hsl(${145 - k*15}, 65%, ${72 + k*8}%)`;
-      ctx.beginPath(); ctx.arc(x*S+S/2, y*S+S/2, S*(i===0 ? 0.56 : 0.5), 0, 7); ctx.fill();
-      if (i > 0 && i % 2 === 0) { // 身上的小圓點花紋
-        ctx.fillStyle = '#ffffff88';
-        ctx.beginPath(); ctx.arc(x*S+S/2, y*S+S/2, S*0.14, 0, 7); ctx.fill();
-      }
-    }
-    // 蛇頭:眼睛、腮紅
-    const [hx, hy] = [snake[0][0]*S+S/2, snake[0][1]*S+S/2];
-    const f = dir, p = [-dir[1], dir[0]];
-    [-1, 1].forEach(sd => {
-      const ex = hx + f[0]*S*0.12 + p[0]*S*0.22*sd, ey = hy + f[1]*S*0.12 + p[1]*S*0.22*sd;
-      ctx.fillStyle = '#fff'; ctx.beginPath(); ctx.arc(ex, ey, S*0.17, 0, 7); ctx.fill();
-      ctx.fillStyle = '#3b2a33'; ctx.beginPath(); ctx.arc(ex + f[0]*S*0.05, ey + f[1]*S*0.05, S*0.09, 0, 7); ctx.fill();
-      ctx.fillStyle = '#ff9ec4aa';
-      ctx.beginPath(); ctx.arc(hx - f[0]*S*0.05 + p[0]*S*0.36*sd, hy - f[1]*S*0.05 + p[1]*S*0.36*sd, S*0.1, 0, 7); ctx.fill();
-    });
-    // 小舌頭(閃爍)
-    if (Math.floor(t/400) % 2 === 0) {
-      ctx.strokeStyle = '#ff5c8a'; ctx.lineWidth = 2; ctx.lineCap = 'round';
-      ctx.beginPath(); ctx.moveTo(hx + f[0]*S*0.5, hy + f[1]*S*0.5); ctx.lineTo(hx + f[0]*S*0.85, hy + f[1]*S*0.85); ctx.stroke();
-    }
-    // 吃到水果的愛心星星
-    ctx.font = `${S*0.6}px serif`;
-    particles = particles.filter(q => q.life > 0);
-    particles.forEach(q => {
-      q.x += q.vx; q.y += q.vy; q.life -= 0.03;
-      ctx.globalAlpha = Math.max(0, q.life);
-      ctx.fillText(q.e, q.x, q.y);
-    });
-    ctx.globalAlpha = 1;
-    requestAnimationFrame(render);
-  }
-
-  function gameOver() {
-    running = false; clearInterval(timer); sfx('over');
-    if (score > best) { best = score; $('best').textContent = best; try { localStorage.setItem('snakeBest', best); } catch(e) {} }
-    const [emoji, msg] = score < 5 ? ['🌱','加油加油,下次會更好!']
-                      : score < 15 ? ['🍎','不錯喔,小蛇吃得好飽!']
-                      : score < 30 ? ['✨','好厲害!你是貪吃蛇高手!']
-                      : ['🏆','太神啦!小蛇都要吃撐了!'];
-    $('ovEmoji').textContent = emoji;
-    $('ovTitle').textContent = '小蛇撞到啦~';
-    $('ovMsg').innerHTML = `${msg}<br>本局 ${score} 分|最高 ${best} 分`;
-    startBtn.textContent = '再玩一次';
-    shareBtn.classList.remove('hidden');
-    overlay.classList.remove('hidden');
-    // ====== 廣告位 3:遊戲結束是插入廣告的好時機 ======
-    // 例如每玩 3 局顯示一次插頁廣告:if (plays % 3 === 0) showInterstitialAd();
-  }
-  function turn(name) {
-    const d = DIRS[name];
-    if (d[0] + dir[0] !== 0 || d[1] + dir[1] !== 0) nextDir = d;
-  }
-
-  startBtn.onclick = start;
-  shareBtn.onclick = async () => {
-    const text = `我在可愛貪食蛇拿到 ${score} 分,來挑戰我!`;
-    try {
-      if (navigator.share) await navigator.share({ title:'可愛貪食蛇', text, url:location.href });
-      else { await navigator.clipboard.writeText(text + ' ' + location.href); shareBtn.textContent = '已複製連結!'; }
-    } catch(e) {}
-  };
-
-  document.addEventListener('keydown', e => {
-    const m = { ArrowUp:'up', w:'up', W:'up', ArrowDown:'down', s:'down', S:'down',
-                ArrowLeft:'left', a:'left', A:'left', ArrowRight:'right', d:'right', D:'right' }[e.key];
-    if (m) { e.preventDefault(); turn(m); }
-    else if ((e.key===' '||e.key==='Enter') && !running) start();
-  });
-  document.querySelectorAll('.pad button').forEach(b => b.addEventListener('pointerdown', e => { e.preventDefault(); turn(b.dataset.d); }));
-
-  let tx, ty;
-  cv.addEventListener('touchstart', e => { tx = e.touches[0].clientX; ty = e.touches[0].clientY; }, { passive:true });
-  cv.addEventListener('touchmove', e => {
-    if (tx == null) return;
-    const dx = e.touches[0].clientX - tx, dy = e.touches[0].clientY - ty;
-    if (Math.abs(dx) > 25 || Math.abs(dy) > 25) {
-      turn(Math.abs(dx) > Math.abs(dy) ? (dx>0?'right':'left') : (dy>0?'down':'up'));
-      tx = e.touches[0].clientX; ty = e.touches[0].clientY;
-    }
-  }, { passive:true });
-
-  reset();
-  requestAnimationFrame(render);
+  const get = k => { try { return localStorage.getItem(k); } catch (e) { return null; } };
+  const set = (id, txt) => { const el = document.getElementById(id); if (el) el.textContent = txt; };
+  const s = +get('snakeBest') || 0, t = +get('best2048') || 0, b = +get('breakoutBest') || 0, m = +get('memBest_normal') || 0;
+  if (s > 0) set('b-snake', '🏆 你的最高分:' + s);
+  if (t > 0) set('b-2048', '🏆 你的最高分:' + t);
+  if (b > 0) set('b-breakout', '🏆 你的最高分:' + b);
+  if (m > 0) set('b-memory', '🏆 普通難度最佳:' + m + ' 步');
 })();
 </script>
 </body>
