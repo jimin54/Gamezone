@@ -3,11 +3,11 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>小遊戲專區 - 免費線上可愛小遊戲(貪食蛇、2048、翻翻樂、打磚塊)</title>
-<meta name="description" content="小遊戲專區提供免費線上可愛小遊戲:貪食蛇、2048、記憶翻翻樂、打磚塊。不用下載、不用註冊,手機電腦都能玩,還有音效與分享挑戰功能。">
+<title>小遊戲專區 - 免費線上可愛小遊戲(貪食蛇、2048、翻翻樂、打磚塊、疊疊樂)</title>
+<meta name="description" content="小遊戲專區提供免費線上可愛小遊戲:貪食蛇、2048、記憶翻翻樂、打磚塊、貓咪疊疊樂。不用下載、不用註冊,手機電腦都能玩,還有音效與分享挑戰功能。">
 <meta property="og:type" content="website">
 <meta property="og:title" content="小遊戲專區 - 免費線上可愛小遊戲">
-<meta property="og:description" content="貪食蛇、2048、翻翻樂、打磚塊,免費線上玩,手機電腦都能玩!">
+<meta property="og:description" content="貪食蛇、2048、翻翻樂、打磚塊、疊疊樂,免費線上玩,手機電腦都能玩!">
 
 <!-- ====== 變現:通過 AdSense 審核後,取消註解並換成你的 ID ======
 <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXXXXXXXXXXXXXX" crossorigin="anonymous"></script>
@@ -47,6 +47,7 @@
   footer { text-align:center; padding:18px 12px 6px; font-size:.78rem; color:#b08795; line-height:1.9; }
   footer a { color:#c06a8f; text-decoration:none; }
 </style>
+<script src="analytics.js" defer></script>
 </head>
 <body>
 <div class="page">
@@ -56,7 +57,7 @@
   </header>
 
   <nav>
-    <a class="on" href="index.html">🏠 首頁</a><a href="snake.html">🐍 貪食蛇</a><a href="2048.html">🐣 2048</a><a href="memory.html">🐰 翻翻樂</a><a href="breakout.html">🧱 打磚塊</a>
+    <a class="on" href="index.html">🏠 首頁</a><a href="snake.html">🐍 貪食蛇</a><a href="2048.html">🐣 2048</a><a href="memory.html">🐰 翻翻樂</a><a href="breakout.html">🧱 打磚塊</a><a href="catstack.html">🐱 疊疊樂</a>
   </nav>
 
   <!-- ====== 廣告位 1:頂部橫幅 ====== -->
@@ -99,6 +100,14 @@
       <p>用貓咪小板反彈小球打碎磚塊,接住愛心和糖果道具,闖過一關又一關。</p>
       <div class="tags"><span>動作</span><span>闖關</span><span>道具</span></div>
       <div class="best" id="b-breakout"></div>
+      <span class="btn">開始玩</span>
+    </a>
+    <a class="card" href="catstack.html">
+      <div class="ico">🐱</div>
+      <h3>貓咪疊疊樂</h3>
+      <p>點一下讓貓咪掉下來,把牠們疊成高高的塔,小心重心歪了整座會倒!</p>
+      <div class="tags"><span>療癒</span><span>抓時機</span><span>單手可玩</span></div>
+      <div class="best" id="b-catstack"></div>
       <span class="btn">開始玩</span>
     </a>
   </div>
@@ -146,6 +155,8 @@
   if (s > 0) set('b-snake', '🏆 你的最高分:' + s);
   if (t > 0) set('b-2048', '🏆 你的最高分:' + t);
   if (b > 0) set('b-breakout', '🏆 你的最高分:' + b);
+  const cs = +get('catstackBest') || 0;
+  if (cs > 0) set('b-catstack', '🏆 你的最高分:' + cs);
   if (m > 0) set('b-memory', '🏆 普通難度最佳:' + m + ' 步');
 })();
 </script>

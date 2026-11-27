@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+<title>貓咪疊疊樂 - 免費線上小遊戲</title>
+<meta name="description" content="超可愛的貓咪疊疊樂線上免費玩,點一下讓貓咪掉下來,把牠們疊成高高的塔,小心別疊歪了!手機電腦都能玩。">
+<meta property="og:title" content="貓咪疊疊樂 - 免費線上小遊戲">
+<meta property="og:description" content="點一下讓貓咪掉下來,疊出最高的貓咪塔,敢來挑戰嗎?">
+
+<!-- ====== 變現:通過 AdSense 審核後,取消註解並換成你的 ID ======
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXXXXXXXXXXXXXX" crossorigin="anonymous"></script>
+-->
+
+<style>
+  :root { --bg:#fff1f5; --card:#ffe4ec; --accent:#ff7eb6; --text:#6b3a4e; }
+  * { box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+  body { margin:0; background:var(--bg); color:var(--text); font-family:"Noto Sans TC",system-ui,-apple-system,sans-serif;
+         display:flex; flex-direction:column; align-items:center; min-height:100vh; padding:12px; }
+  h1 { margin:4px 0 4px; font-size:1.6rem; letter-spacing:2px; }
+  nav { font-size:.85rem; margin-bottom:6px; text-align:center; line-height:1.9; }
+  nav a { white-space:nowrap; color:#c06a8f; margin:0 8px; text-decoration:none; font-weight:600; }
+  nav a:hover { color:var(--accent); }
+  .ad { width:100%; max-width:420px; min-height:60px; margin:8px 0; background:#ff7eb614; border:1px dashed #ff7eb655;
+        border-radius:12px; display:flex; align-items:center; justify-content:center; font-size:.75rem; color:#b08795; overflow:hidden; }
+  .bar { width:100%; max-width:420px; display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; gap:6px; font-weight:700; font-size:.9rem; }
+  .box { background:var(--card); border-radius:16px; padding:4px 10px; text-align:center; min-width:56px; }
+  .box small { display:block; font-size:.62rem; color:#b08795; font-weight:500; }
+  .wrap { position:relative; width:100%; max-width:420px; }
+  canvas { width:100%; aspect-ratio:400/560; border-radius:20px; display:block; touch-action:none;
+           border:4px solid #ffc2d9; box-shadow:0 6px 18px #ff7eb633; background:#fff7fa; }
+  .overlay { position:absolute; inset:0; background:#fff1f5ee; border-radius:20px; display:flex; flex-direction:column;
+             align-items:center; justify-content:center; gap:10px; text-align:center; padding:16px; }
+  .overlay.hidden { display:none; }
+  .big { font-size:3rem; line-height:1; }
+  button { background:var(--accent); color:#fff; border:0; border-radius:999px; padding:10px 26px; font-size:1rem; font-weight:700; cursor:pointer;
+           box-shadow:0 4px 0 #e0599a; }
+  button:active { transform:translateY(2px); box-shadow:0 2px 0 #e0599a; }
+  button.ghost { background:#fff; color:var(--accent); border:2px solid var(--accent); box-shadow:none; }
+  button.hidden { display:none; }
+  .tools { width:100%; max-width:420px; text-align:center; margin-top:10px; font-size:.8rem; color:#b08795; line-height:1.6; }
+  footer { margin-top:auto; padding:12px; font-size:.75rem; color:#b08795; text-align:center; line-height:1.9; }
+  footer a { color:#c06a8f; text-decoration:none; }
+  .guide { width:100%; max-width:560px; margin:14px 0 8px; background:#fff; border:2px solid #ffe0ea; border-radius:20px;
+           padding:16px 20px; font-size:.9rem; line-height:1.85; }
+  .guide h2 { margin:0 0 6px; font-size:1.1rem; }
+  .guide h3 { margin:14px 0 4px; font-size:1rem; color:#e0599a; }
+  .guide p { margin:4px 0; }
+  .guide ul { margin:4px 0; padding-left:1.3em; }
+  .guide a { color:#c06a8f; font-weight:600; text-decoration:none; }
+</style>
+<script src="analytics.js" defer></script>
+</head>
+<body>
+  <h1>🐱 貓咪疊疊樂 🐾</h1>
+  <nav><a href="index.html">🏠 首頁</a><a href="snake.html">🐍 貪食蛇</a><a href="2048.html">🐣 2048</a><a href="memory.html">🐰 翻翻樂</a><a href="breakout.html">🧱 打磚塊</a><a href="catstack.html">🐱 疊疊樂</a></nav>
+
+  <!-- ====== 廣告位 1:頂部橫幅 ====== -->
+  <div class="ad" id="ad-top">廣告位(頂部橫幅 320x50)</div>
+
+  <div class="bar">
+    <div class="box"><small>分數</small><span id="score">0</span></div>
+    <div class="box"><small>層數</small><span id="cats">0</span></div>
+    <button class="ghost" id="muteBtn" style="padding:4px 12px;box-shadow:none" aria-label="音效開關">🔊</button>
+    <div class="box"><small>最高</small><span id="best">0</span></div>
+  </div>
+
+  <div class="wrap">
+    <canvas id="c" width="800" height="1120"></canvas>
+    <div class="overlay" id="overlay">
+      <div class="big" id="ovEmoji">🐱</div>
+      <h2 id="ovTitle" style="margin:0">準備好疊貓咪了嗎?</h2>
+      <div id="ovMsg">點一下畫面,讓貓咪掉下來,把牠們疊得又高又穩!</div>
+      <button id="startBtn">開始遊戲</button>
+      <button class="ghost hidden" id="shareBtn">邀請朋友來挑戰</button>
+    </div>
+  </div>
+
+  <div class="tools">點一下畫面讓貓咪掉下去<br>對得越準越穩,正中間會有「完美」加分<br>電腦可按空白鍵或滑鼠點擊</div>
+
+  <!-- ====== 廣告位 2:遊戲下方 ====== -->
+  <div class="ad" id="ad-bottom">廣告位(遊戲下方 300x250)</div>
+
+  <section class="guide">
+    <h2>🐱 貓咪疊疊樂玩法說明</h2>
+    <p>畫面上方有一隻貓咪左右來回移動,抓準時機點一下,牠就會掉到下面的坐墊上。把一隻隻貓咪往上疊,疊得越高分數越高,但要是疊得太歪,整座貓咪塔就會滑倒。</p>
+    <h3>遊戲規則</h3>
+    <ul>
+      <li>貓咪有不同的寬度,越寬的貓咪越重,對塔的平衡影響也越大。</li>
+      <li>每成功疊上一隻貓咪得 1 分;落在正中間(誤差很小)算「完美」,會有額外加分,連續完美還會累積連擊。</li>
+      <li>如果整座塔的重心超出下面那隻貓咪能支撐的範圍,上面的貓咪就會滑落,遊戲結束。</li>
+      <li>貓咪完全沒有碰到塔,直接掉下去也會結束遊戲。</li>
+      <li>塔越高,貓咪移動得越快;塔快要不穩時會開始搖晃,這是在提醒你要小心。</li>
+    </ul>
+    <h3>操作方式</h3>
+    <ul>
+      <li><b>手機</b>:點一下畫面任何地方,貓咪就會掉下去。</li>
+      <li><b>電腦</b>:滑鼠點一下畫面,或按空白鍵、Enter。</li>
+    </ul>
+    <h3>小技巧</h3>
+    <ul>
+      <li>畫面上的虛線會指出貓咪掉落的位置,對準下面那隻貓咪的中心最穩。</li>
+      <li>如果塔已經偏向一邊,下一隻貓咪可以故意放在另一邊,把重心拉回來。</li>
+      <li>寬的貓咪放在偏的位置要特別小心,窄的貓咪比較好控制。</li>
+      <li>塔開始搖晃的時候,先求穩,不要急著追連擊。</li>
+    </ul>
+    <h3>常見問題</h3>
+    <p><b>為什麼我覺得貓咪只偏一點就倒了?</b> 判斷的是整座塔的重心,不只是最上面那一隻。上面疊了很多貓咪時,下面的貓咪要撐住的重量更多,偏一點點就可能超出範圍。</p>
+    <p><b>最高分會保存嗎?</b> 會,記錄在你的瀏覽器裡。清除瀏覽資料或換裝置後紀錄會消失。</p>
+    <h3>更多好玩的遊戲</h3>
+    <p><a href="snake.html">🐍 可愛貪食蛇</a> ・ <a href="2048.html">🐣 可愛 2048</a> ・ <a href="memory.html">🐰 可愛翻翻樂</a> ・ <a href="breakout.html">🧱 可愛打磚塊</a> ・ <a href="index.html">🏠 回首頁</a></p>
+  </section>
+
+  <footer><a href="about.html">關於我們</a> · <a href="privacy.html">隱私權政策</a> · <a href="contact.html">聯絡我們</a><br>© 2026 小遊戲專區</footer>
+
+<script>
+(() => {
+  const W = 400, H = 560;
+  const $ = id => document.getElementById(id);
+  const cv = $('c'), ctx = cv.getContext('2d');
+  ctx.scale(2, 2);
+  const overlay = $('overlay'), startBtn = $('startBtn'), shareBtn = $('shareBtn');
+
+  // ====== 音效(Web Audio,不需要音檔) ======
+  let audio = null, muted = false;
+  try { muted = localStorage.getItem('catstackMute') === '1'; } catch (e) {}
+  const muteBtn = $('muteBtn');
+  muteBtn.textContent = muted ? '🔇' : '🔊';
+  muteBtn.onclick = () => {
+    muted = !muted;
+    muteBtn.textContent = muted ? '🔇' : '🔊';
+    try { localStorage.setItem('catstackMute', muted ? '1' : '0'); } catch (e) {}
+  };
+  function tone(f1, f2, start, dur, type = 'sine', vol = 0.12) {
+    const o = audio.createOscillator(), gn = audio.createGain();
+    o.type = type;
+    const t0 = audio.currentTime + start;
+    o.frequency.setValueAtTime(f1, t0);
+    if (f2 && f2 !== f1) o.frequency.exponentialRampToValueAtTime(f2, t0 + dur);
+    gn.gain.setValueAtTime(vol, t0);
+    gn.gain.exponentialRampToValueAtTime(0.001, t0 + dur);
+    o.connect(gn); gn.connect(audio.destination);
+    o.start(t0); o.stop(t0 + dur);
+  }
+  function sfx(name, n = 0) {
+    if (muted) return;
+    try {
+      audio = audio || new (window.AudioContext || window.webkitAudioContext)();
+      if (audio.state === 'suspended') audio.resume();
+      if (name === 'drop') { tone(520, 820, 0, .09, 'sine', .1); tone(820, 480, .09, .1, 'sine', .08); }
+      else if (name === 'land') tone(170, 110, 0, .12, 'triangle', .2);
+      else if (name === 'perfect') { tone(523 + Math.min(n, 6) * 55, 0, 0, .1, 'triangle', .13); tone(784 + Math.min(n, 6) * 55, 0, .08, .16, 'triangle', .13); }
+      else if (name === 'fall') tone(620, 140, 0, .55, 'sawtooth', .07);
+      else if (name === 'over') [523, 440, 349, 262].forEach((f, i) => tone(f, 0, i * .14, .2, 'sine', .18));
+      else if (name === 'start') [523, 659, 784].forEach((f, i) => tone(f, 0, i * .08, .12, 'triangle', .13));
+    } catch (e) {}
+  }
+
+  // ====== 遊戲設定 ======
+  const GY = 500;            // 坐墊上緣(世界座標)
+  const STEP = 42;           // 每層高度
+  const CH = 46;             // 貓咪畫出來的高度
+  const HOVER_Y = 76;        // 待命貓咪的畫面高度(中心)
+  const PLAT = { x: 200, w: 230 };
+  const WIDTHS = [60, 74, 88, 102];
+  const HUES = [340, 20, 48, 150, 195, 265, 310];
+
+  let state = 'menu', stack = [], cur = null, falls = [], parts = [], floats = [];
+  let camY = 0, camTarget = 0, score = 0, combo = 0, best = 0, plays = 0;
+  let spawnAt = 0, overAt = 0, last = 0, now = 0, shareText = '', shake = 0;
+  try { best = +localStorage.getItem('catstackBest') || 0; } catch (e) {}
+  $('best').textContent = best;
+
+  const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+  const speed = () => 2.4 + Math.min(stack.length * 0.09, 4.2);
+  function updateHud() { $('score').textContent = score; $('cats').textContent = stack.length; }
+
+  function spawnCat() {
+    const w = WIDTHS[Math.floor(Math.random() * WIDTHS.length)];
+    cur = {
+      x: Math.random() < .5 ? w / 2 + 8 : W - w / 2 - 8, w,
+      dir: 0, hue: HUES[Math.floor(Math.random() * HUES.length)], y: 0, vy: 0, sq: 0
+    };
+    cur.dir = cur.x < W / 2 ? 1 : -1;
+    state = 'aim';
+  }
+
+  function startGame() {
+    stack = []; falls = []; parts = []; floats = [];
+    camY = camTarget = 0; score = 0; combo = 0; shake = 0; plays++;
+    updateHud();
+    overlay.classList.add('hidden');
+    sfx('start');
+    spawnCat();
+  }
+
+  function drop() {
+    if (state !== 'aim') return;
+    state = 'fall';
+    cur.y = HOVER_Y + CH / 2 - camY;
+    cur.vy = 2;
+    sfx('drop');
+  }
+
+  // 找出會倒的位置:從最上面往下,檢查「這一隻以上所有貓咪的重心」是否還在下面那隻的身體範圍內
+  function checkTopple() {
+    for (let k = stack.length - 1; k >= 0; k--) {
+      let sw = 0, sx = 0;
+      for (let i = k; i < stack.length; i++) { sw += stack[i].w; sx += stack[i].w * stack[i].x; }
+      const com = sx / sw, sup = k === 0 ? PLAT : stack[k - 1];
+      if (Math.abs(com - sup.x) > sup.w / 2) return { k, dir: com > sup.x ? 1 : -1 };
+    }
+    return null;
+  }
+  // 越接近 0 越危險,1 代表很穩
+  function stability() {
+    let r = 1;
+    for (let k = stack.length - 1; k >= 0; k--) {
+      let sw = 0, sx = 0;
+      for (let i = k; i < stack.length; i++) { sw += stack[i].w; sx += stack[i].w * stack[i].x; }
+      const sup = k === 0 ? PLAT : stack[k - 1];
+      r = Math.min(r, (sup.w / 2 - Math.abs(sx / sw - sup.x)) / (sup.w / 2));
+    }
+    return r;
+  }
+
+  function addFloat(text, x, y, color = '#ff7eb6') { floats.push({ text, x, y, life: 1, color }); }
+  function burst(x, y, n = 6) {
+    for (let i = 0; i < n; i++)
+      parts.push({ x, y, vx: (Math.random() - .5) * 3, vy: -1.2 - Math.random() * 1.8, life: 1, e: ['✨', '💗', '⭐'][i % 3] });
+  }
+
+  function land() {
+    const topB = GY - stack.length * STEP;
+    const sup = stack.length ? stack[stack.length - 1] : PLAT;
+    cur.y = topB; cur.vy = 0;
+    const perfect = Math.abs(cur.x - sup.x) <= 5;
+    if (perfect) { cur.x = sup.x; combo++; } else combo = 0;
+    const gain = 1 + (perfect ? Math.min(combo, 5) : 0);
+    score += gain;
+    cur.sq = 1;
+    stack.push(cur);
+    const sx = cur.x, sy = topB - CH / 2 + camY;
+    const t = checkTopple();
+    if (t) {
+      const pieces = stack.splice(t.k);
+      pieces.forEach((c, i) => falls.push({ c, vx: t.dir * (1.3 + i * 0.25), vy: -2.5 - i * 0.2, rot: 0, vr: t.dir * (0.03 + i * 0.006) }));
+      updateHud(); sfx('fall');
+      state = 'topple'; overAt = now + 1100; shake = 8;
+      return;
+    }
+    updateHud();
+    if (perfect) {
+      sfx('perfect', combo);
+      addFloat(combo > 1 ? `完美! x${combo}` : '完美!', sx, sy - 34);
+      burst(sx, sy);
+    } else { sfx('land'); }
+    camTarget = Math.max(0, 300 - (GY - stack.length * STEP));
+    cur = null; state = 'wait'; spawnAt = now + 200;
+  }
+
+  function miss() {
+    sfx('fall');
+    const sup = stack.length ? stack[stack.length - 1] : PLAT;
+    const dir = cur.x >= sup.x ? 1 : -1;
+    falls.push({ c: cur, vx: dir * 1.6, vy: 0, rot: 0, vr: dir * 0.06 });
+    cur = null; state = 'topple'; overAt = now + 900;
+  }
+
+  function finish() {
+    state = 'over';
+    sfx('over');
+    const n = stack.length;
+    if (score > best) { best = score; $('best').textContent = best; try { localStorage.setItem('catstackBest', best); } catch (e) {} }
+    const [em, msg] = n < 5 ? ['🌱', '再接再厲,貓咪們等你再來!'] : n < 12 ? ['🐱', '不錯喔,貓咪塔蓋得好高!']
+                    : n < 25 ? ['✨', '好厲害!你是疊貓咪高手!'] : ['🏆', '太神啦!這座塔直達天空!'];
+    $('ovEmoji').textContent = em;
+    $('ovTitle').textContent = '貓咪塔倒啦~';
+    $('ovMsg').innerHTML = `${msg}<br>本局 ${score} 分|成功疊了 ${n} 隻<br>最高 ${best} 分`;
+    startBtn.textContent = '再玩一次';
+    shareText = `我在貓咪疊疊樂疊了 ${n} 隻貓咪、拿到 ${score} 分,敢來挑戰嗎?`;
+    shareBtn.textContent = '邀請朋友來挑戰';
+    shareBtn.classList.remove('hidden');
+    overlay.classList.remove('hidden');
+    // ====== 廣告位 3:遊戲結束是插入廣告的好時機 ======
+    // 例如每玩 3 局顯示一次插頁廣告:if (plays % 3 === 0) showInterstitialAd();
+  }
+
+  function update(dt) {
+    camY += (camTarget - camY) * Math.min(1, 0.08 * dt);
+    if (shake > 0) shake = Math.max(0, shake - 0.4 * dt);
+
+    if (state === 'aim') {
+      cur.x += cur.dir * speed() * dt;
+      const lo = cur.w / 2 + 8, hi = W - cur.w / 2 - 8;
+      if (cur.x < lo) { cur.x = lo; cur.dir = 1; }
+      if (cur.x > hi) { cur.x = hi; cur.dir = -1; }
+    } else if (state === 'fall') {
+      const topB = GY - stack.length * STEP;
+      cur.vy += 0.55 * dt;
+      cur.y += cur.vy * dt;
+      if (cur.y >= topB) {
+        const sup = stack.length ? stack[stack.length - 1] : PLAT;
+        const overlap = Math.min(cur.x + cur.w / 2, sup.x + sup.w / 2) - Math.max(cur.x - cur.w / 2, sup.x - sup.w / 2);
+        if (overlap > 8) land(); else miss();
+      }
+    } else if (state === 'wait' && now >= spawnAt) {
+      spawnCat();
+    } else if (state === 'topple' && now >= overAt) {
+      finish();
+    }
+
+    stack.forEach(c => { c.sq *= Math.pow(0.86, dt); });
+    falls.forEach(f => { f.vy += 0.5 * dt; f.c.y += f.vy * dt; f.c.x += f.vx * dt; f.rot += f.vr * dt; });
+    falls = falls.filter(f => f.c.y < GY + 700);
+  }
+
+  function rr(x, y, w, h, r) {
+    ctx.beginPath();
+    ctx.moveTo(x + r, y); ctx.arcTo(x + w, y, x + w, y + h, r); ctx.arcTo(x + w, y + h, x, y + h, r);
+    ctx.arcTo(x, y + h, x, y, r); ctx.arcTo(x, y, x + w, y, r); ctx.closePath();
+  }
+
+  // 畫一隻貓咪:cx 為中心 x,bottom 為腳底的畫面 y
+  function drawCat(c, cx, bottom, rot = 0, sq = 0, surprised = false) {
+    const w = c.w;
+    ctx.save();
+    ctx.translate(cx, bottom - CH / 2);
+    ctx.rotate(rot);
+    ctx.scale(1 + 0.1 * sq, 1 - 0.12 * sq);
+    // 耳朵
+    [-1, 1].forEach(s => {
+      ctx.fillStyle = `hsl(${c.hue},75%,70%)`;
+      ctx.beginPath();
+      ctx.moveTo(s * (w / 2 - 6), -CH / 2 + 8); ctx.lineTo(s * (w / 2 - 14), -CH / 2 - 10); ctx.lineTo(s * (w / 2 - 28), -CH / 2 + 6);
+      ctx.closePath(); ctx.fill();
+      ctx.fillStyle = '#ffd3e3';
+      ctx.beginPath();
+      ctx.moveTo(s * (w / 2 - 11), -CH / 2 + 5); ctx.lineTo(s * (w / 2 - 15), -CH / 2 - 4); ctx.lineTo(s * (w / 2 - 23), -CH / 2 + 5);
+      ctx.closePath(); ctx.fill();
+    });
+    // 身體
+    rr(-w / 2, -CH / 2, w, CH, 15);
+    const g = ctx.createLinearGradient(0, -CH / 2, 0, CH / 2);
+    g.addColorStop(0, `hsl(${c.hue},85%,84%)`); g.addColorStop(1, `hsl(${c.hue},75%,72%)`);
+    ctx.fillStyle = g; ctx.fill();
+    ctx.strokeStyle = `hsl(${c.hue},65%,58%)`; ctx.lineWidth = 2.5; ctx.stroke();
+    // 臉
+    ctx.fillStyle = '#3b2a33';
+    const ex = Math.min(w * 0.2, 18);
+    if (surprised) {
+      ctx.beginPath(); ctx.arc(-ex, -3, 3.4, 0, 7); ctx.arc(ex, -3, 3.4, 0, 7); ctx.fill();
+      ctx.fillStyle = '#fff';
+      ctx.beginPath(); ctx.arc(-ex + 1, -4, 1.2, 0, 7); ctx.arc(ex + 1, -4, 1.2, 0, 7); ctx.fill();
+      ctx.fillStyle = '#3b2a33';
+      ctx.beginPath(); ctx.ellipse(0, 7, 2.4, 3, 0, 0, 7); ctx.fill();
+    } else {
+      ctx.beginPath(); ctx.arc(-ex, -3, 2.6, 0, 7); ctx.arc(ex, -3, 2.6, 0, 7); ctx.fill();
+      ctx.strokeStyle = '#3b2a33'; ctx.lineWidth = 1.8; ctx.lineCap = 'round';
+      ctx.beginPath(); ctx.moveTo(-5, 5); ctx.quadraticCurveTo(-2.5, 9, 0, 5); ctx.quadraticCurveTo(2.5, 9, 5, 5); ctx.stroke();
+    }
+    ctx.fillStyle = '#ff7eb655';
+    ctx.beginPath(); ctx.arc(-ex - 8, 3, 4.5, 0, 7); ctx.arc(ex + 8, 3, 4.5, 0, 7); ctx.fill();
+    ctx.strokeStyle = '#3b2a3344'; ctx.lineWidth = 1;
+    [-1, 1].forEach(s => { [[-1, -3], [1, 3]].forEach(([a, b]) => {
+      ctx.beginPath(); ctx.moveTo(s * (ex + 12), 1 + a * 1); ctx.lineTo(s * (ex + 22), 1 + b); ctx.stroke();
+    }); });
+    ctx.restore();
+  }
+
+  function draw() {
+    // 背景
+    const bg = ctx.createLinearGradient(0, 0, 0, H);
+    bg.addColorStop(0, '#fff7fa'); bg.addColorStop(1, '#ffe9f1');
+    ctx.fillStyle = bg; ctx.fillRect(0, 0, W, H);
+    ctx.save();
+    if (shake > 0) ctx.translate((Math.random() - .5) * shake, (Math.random() - .5) * shake);
+
+    ctx.font = '34px serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+    ctx.globalAlpha = .55;
+    for (let i = 0; i < 5; i++) ctx.fillText('☁️', (i * 97 + 30) % 360 + 20, ((i * 150 + camY * 0.35) % 700) - 70);
+    ctx.globalAlpha = 1;
+
+    // 地面與坐墊
+    const gy = GY + camY;
+    ctx.fillStyle = '#ffd6e6'; ctx.fillRect(-10, gy + 26, W + 20, H + 400);
+    rr(PLAT.x - PLAT.w / 2, gy, PLAT.w, 30, 14);
+    ctx.fillStyle = '#ffb3d1'; ctx.fill();
+    ctx.strokeStyle = '#ff7eb6'; ctx.lineWidth = 2.5; ctx.stroke();
+    ctx.setLineDash([5, 5]); ctx.strokeStyle = '#ffffffcc'; ctx.lineWidth = 2;
+    ctx.beginPath(); ctx.moveTo(PLAT.x - PLAT.w / 2 + 12, gy + 15); ctx.lineTo(PLAT.x + PLAT.w / 2 - 12, gy + 15); ctx.stroke();
+    ctx.setLineDash([]);
+
+    // 疊好的貓咪(塔快不穩時輕輕搖晃)
+    const risk = stability(), amp = risk < 0.4 ? (0.4 - risk) / 0.4 : 0;
+    stack.forEach((c, i) => {
+      const sway = amp * 5 * Math.sin(now / 150 + i * 0.3) * (0.2 + i / Math.max(1, stack.length));
+      drawCat(c, c.x + sway, GY - i * STEP + camY, 0, c.sq);
+    });
+    falls.forEach(f => drawCat(f.c, f.c.x, f.c.y + camY, f.rot, 0, true));
+
+    // 待命 / 掉落中的貓咪
+    if (state === 'aim' && cur) {
+      const topY = GY - stack.length * STEP + camY;
+      ctx.setLineDash([4, 6]); ctx.strokeStyle = '#ff7eb688'; ctx.lineWidth = 2;
+      ctx.beginPath(); ctx.moveTo(cur.x, HOVER_Y + CH / 2 + 6); ctx.lineTo(cur.x, topY); ctx.stroke();
+      ctx.setLineDash([]);
+      drawCat(cur, cur.x, HOVER_Y + CH / 2 + Math.sin(now / 200) * 2, 0, 0, false);
+    } else if (state === 'fall' && cur) {
+      drawCat(cur, cur.x, cur.y + camY, 0, 0, true);
+    }
+
+    // 特效
+    ctx.font = '14px serif'; ctx.textAlign = 'center';
+    parts = parts.filter(q => q.life > 0);
+    parts.forEach(q => { q.x += q.vx; q.y += q.vy; q.vy += 0.06; q.life -= 0.03; ctx.globalAlpha = Math.max(0, q.life); ctx.fillText(q.e, q.x, q.y); });
+    ctx.globalAlpha = 1;
+    floats = floats.filter(f => f.life > 0);
+    ctx.font = '800 22px sans-serif';
+    floats.forEach(f => { f.y -= 0.7; f.life -= 0.02; ctx.globalAlpha = Math.max(0, f.life); ctx.fillStyle = f.color; ctx.fillText(f.text, f.x, f.y); });
+    ctx.globalAlpha = 1;
+    ctx.restore();
+
+    if ((state === 'aim' || state === 'fall') && stack.length < 2) {
+      ctx.fillStyle = '#b08795'; ctx.font = '600 14px sans-serif'; ctx.textAlign = 'center';
+      ctx.fillText('點一下畫面,讓貓咪掉下去 🐾', W / 2, H - 22);
+    }
+  }
+
+  function frame(ts) {
+    now = ts;
+    const dt = clamp((ts - (last || ts)) / 16.667, 0.1, 2.5); last = ts;
+    if (state !== 'menu' && state !== 'over') update(dt);
+    else camY += (camTarget - camY) * Math.min(1, 0.08 * dt);
+    draw();
+    requestAnimationFrame(frame);
+  }
+
+  // 操作
+  cv.addEventListener('pointerdown', e => { e.preventDefault(); drop(); });
+  document.addEventListener('keydown', e => {
+    if (e.key === ' ' || e.key === 'Enter' || e.key === 'ArrowDown') {
+      e.preventDefault();
+      if (state === 'aim') drop(); else if (state === 'menu' || state === 'over') startGame();
+    }
+  });
+  startBtn.onclick = startGame;
+  shareBtn.onclick = async () => {
+    const text = shareText || '來玩貓咪疊疊樂,看看你能疊幾隻!';
+    try {
+      if (navigator.share) await navigator.share({ title: '貓咪疊疊樂', text, url: location.href });
+      else { await navigator.clipboard.writeText(text + ' ' + location.href); shareBtn.textContent = '已複製連結!'; }
+    } catch (e) {}
+  };
+
+  requestAnimationFrame(frame);
+})();
+</script>
+</body>
+</html>
